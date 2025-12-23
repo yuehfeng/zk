@@ -149,6 +149,7 @@ export class Comboitem extends zul.LabelImageWidget implements zul.LabelImageWid
 			var cb = this.parent;
 			cb._select(this, {sendOnSelect: true, sendOnChange: true});
 			this._updateHoverImage();
+			cb._isItemPending = false;
 			cb.close({sendOnOpen: true, focus: true});
 
 			// Fixed the onFocus event is triggered too late in IE.
@@ -157,6 +158,14 @@ export class Comboitem extends zul.LabelImageWidget implements zul.LabelImageWid
 				zk(cb.getInputNode()).focus();
 			evt.stop();
 		}
+	}
+
+	/** @internal */
+	override doMouseDown_(evt: zk.Event): void {
+		var cb = this.parent;
+		if (cb)
+			cb._isItemPending = true;
+		super.doMouseDown_(evt);
 	}
 
 	/** @internal */

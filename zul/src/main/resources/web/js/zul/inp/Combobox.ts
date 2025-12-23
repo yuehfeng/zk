@@ -58,6 +58,8 @@ export class Combobox extends zul.inp.ComboWidget {
 	_initSelUuid?: string;
 	/** @internal */
 	declare _shallClose?: boolean;
+	/** @internal */
+	_isItemPending = false;
 
 	/**
 	 * @returns whether to automatically complete this text box
@@ -112,6 +114,14 @@ export class Combobox extends zul.inp.ComboWidget {
 		}
 
 		return this;
+	}
+
+	override doBlur_(evt: zk.Event): void {
+		if (this._isItemPending) {
+			zk(this.getInputNode()).focus();
+			return;
+		}
+		super.doBlur_(evt);
 	}
 
 	/**
