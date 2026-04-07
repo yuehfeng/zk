@@ -114,6 +114,11 @@ public class DHtmlResourceServlet extends HttpServlet {
 									: I18Ns.setup(hsess, request, response, "UTF-8")
 					: Charsets.setup(null, request, response, "UTF-8");
 			try {
+				// ZK-6083: Fix path traversal vulnerabilities
+				java.nio.file.Path normalized = java.nio.file.Path.of(pi).normalize();
+				if (!normalized.toString().startsWith(ClassWebResource.PATH_PREFIX)) {
+					throw new IllegalArgumentException("User path escapes the base path [" + normalized + "]");
+				}
 				cwr.service(request, response, pi.substring(ClassWebResource.PATH_PREFIX.length()));
 			} finally {
 				if (hsess != null)

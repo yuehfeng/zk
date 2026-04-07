@@ -57,6 +57,7 @@ import org.zkoss.util.resource.Locator;
 import org.zkoss.util.resource.Locators;
 import org.zkoss.web.Attributes;
 import org.zkoss.web.servlet.http.Encodes;
+import org.zkoss.web.servlet.http.Https;
 import org.zkoss.web.util.resource.ExtendletContext;
 import org.zkoss.web.util.resource.ServletContextLocator;
 
@@ -1050,7 +1051,7 @@ public class Servlets {
 	public static final URL getResource(ServletContext ctx, String uri) throws UnsupportedEncodingException {
 		try {
 			if (uri != null && uri.toLowerCase(java.util.Locale.ENGLISH).startsWith("file://")) {
-				final File file = new File(new URI(uri));
+				final File file = new File(new URI(Https.sanitizePath(uri))); // ZK-6083
 				return file.exists() ? file.toURI().toURL() : null;
 				//spec: return null if not found
 			}
@@ -1123,7 +1124,7 @@ public class Servlets {
 				}
 			} else {
 				_svlctx = ctx;
-				_uri = uri;
+				_uri = Https.sanitizePath(uri); // ZK-6083
 			}
 		}
 

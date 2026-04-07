@@ -159,6 +159,11 @@ public class ClassWebResource {
 			if (url != null)
 				return url;
 		}
+		// ZK-6083: Fix path traversal vulnerabilities
+		java.nio.file.Path normalized = java.nio.file.Path.of(PATH_PREFIX, uri).normalize();
+		if (!normalized.toString().startsWith(PATH_PREFIX)) {
+			throw new IllegalArgumentException("User path escapes the base path [" + normalized + "]");
+		}
 		return Locators.getDefault().getResource(PATH_PREFIX + uri);
 	}
 
@@ -173,6 +178,11 @@ public class ClassWebResource {
 			final InputStream is = _extraloc.getResourceAsStream(uri);
 			if (is != null)
 				return is;
+		}
+		// ZK-6083: Fix path traversal vulnerabilities
+		java.nio.file.Path normalized = java.nio.file.Path.of(PATH_PREFIX, uri).normalize();
+		if (!normalized.toString().startsWith(PATH_PREFIX)) {
+			throw new IllegalArgumentException("User path escapes the base path [" + normalized + "]");
 		}
 		return Locators.getDefault().getResourceAsStream(PATH_PREFIX + uri);
 	}
@@ -265,8 +275,14 @@ public class ClassWebResource {
 	public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		final String pi = Https.getThisPathInfo(request);
 		//		if (log.isDebugEnabled()) log.debug("Path info: "+pi);
-		if (pi != null)
+		if (pi != null) {
+			// ZK-6083: Fix path traversal vulnerabilities
+			java.nio.file.Path normalized = java.nio.file.Path.of(pi).normalize();
+			if (!normalized.toString().startsWith(PATH_PREFIX)) {
+				throw new IllegalArgumentException("User path escapes the base path [" + normalized + "]");
+			}
 			service(request, response, pi.substring(PATH_PREFIX.length()));
+		}
 	}
 
 	/** Process the request with the specified path.
