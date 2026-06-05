@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+F110-ZK-6106.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Fri May 15 14:16:49 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk xmlns:ca="client/attribute">
+	<zscript><![CDATA[
+	public class AcceptAllConstraint implements Constraint, CustomConstraint {
+		public void validate(Component comp, Object value) {
+		}
+		public void showCustomError(Component comp, WrongValueException ex) {
+			if (ex != null)
+				comp.getFellow("customCstErrLog").setValue("error:" + ex.getMessage());
+		}
+	}
+	AcceptAllConstraint acceptAll = new AcceptAllConstraint();
+	]]></zscript>
+	<label multiline="true">
+		ZK-6106 — Inputmask (PE)
+
+		Inputmask section:
+		1. phoneMask "9999-999-9999" — typing "0912345678" → "0912-345-678_".
+		2. lettersMask "aa-99" — letters then digits → "ab-12"; digit at first slot is rejected.
+		3. anyMask "***-***" + instant=true — a complete fill commits after the typing pause, no blur needed.
+		4. literalMask "\99" — renders literal '9' then a digit slot.
+		5. strictFillMask — partial fill + blur keeps the text, marks the field invalid
+		   and shows the errorbox; completing the fill commits and clears the error.
+		6. announceMask announceProgress="true" — za11y announces "N of 4 filled" once the typing pauses;
+		   announceOffMask (default) announces nothing.
+		7. slotCharMask placeholderChar="X" — custom placeholder character.
+		8. readonlyMask / disabledMask — HTML attributes propagate.
+		9. valueMask + setValue("1234") — server-side setter round-trip.
+		10. anyCharsMask — `*` (any) token accepts alphanumeric only (rejects symbols).
+		    optMask "(999) 999-9999[ x999]" — optional [ ] section hidden until typed.
+		11. constraintMask constraint="no empty" — onError fires on blur of empty.
+		12. backspaceMask — Backspace clears the previous slot.
+		13. trailingLiteralMask "(999)" — complete fill commits the trailing literal.
+		14. instantDigitMask — instant + rejected char must not break the caret nor commit.
+		15. readonlyValueMask — readonly value survives Backspace/paste.
+		16. unmaskValueMask — setValue tolerates an already-formatted string.
+		17. changingMask — tabbing through an empty field fires no onChanging.
+		18. readonlyPartialMask — a readonly partial value survives focus + blur.
+		19. fillerCollisionMask placeholderChar="0" on "99:99" — the filler falls back to '_'.
+		    fullWidthFillerMask placeholderChar="０" on "9999" — a full-width digit filler falls back too.
+		    mixedDeleteMask "aa-99" — deleting a letter never moves a digit into a letter slot.
+		    escapedLiteralMask "99\99999" — inserting at the start never turns the literal 9 into data.
+		20. valueFirstMask — value declared before format is fitted to the slots.
+		21. forgedMask — a client onChange that is not a slot string, or fills only part of the slots, is rejected.
+		22. readonlyOkMask — Enter inside an onOK ancestor leaves a readonly empty field blank.
+		    emptyOkMask — Enter on an empty field fires no client onChange.
+		23. changingLongMask — typing 10 digits quickly fires one onChanging.
+		24. optional section followed by a required slot — setFormat throws.
+		25. customCstMask — a CustomConstraint that accepts everything must not let a partial fill commit.
+		26. strictSetValueMask — setValue("12") on a strictFill field: the next getValue throws.
+		27. optionalLiteralMask — a required literal after an optional section: setFormat throws;
+		    an optional section at the very end does not.
+		28. rawSyntaxMask "\999[ x999]" — the errorbox does not show the raw format syntax.
+		29. authoredDescTextbox / plainCstTextbox — the errorbox keeps aria-describedby token-wise.
+		30. instantStrictMask — instant + strictFill: the debounced commit of a partial fill shows the
+		    errorbox and sends nothing; completing the fill commits it and clears the error.
+		31. refitMask "aaa" value "abc" + setFormat("999") — the server drops the letters as the client does;
+		    focus + blur fires no onChange.
+		32. unmaskNullMask "99-99" value "1234" + setFormat(null) — client and server both keep "1234";
+		    focus + blur fires no onChange.
+		33. orderStrictMask / orderReadonlyMask — value="12" declared before strictFill="false" /
+		    readonly="true" loads (the fill is checked when read, not when set).
+		34. edgeValueMask — setValue("abcd") / setValue("12345") are refused and keep the value.
+	</label>
+	<separator />
+	<label value="Visual parity reference — the Inputmask below must look identical to this Intbox / Textbox." />
+	<hbox spacing="8px" align="center">
+		<label value="Textbox:" />
+		<textbox id="referenceTextbox" value="ref" />
+		<label value="Intbox:" />
+		<intbox id="referenceIntbox" value="123" />
+		<label value="Inputmask:" />
+		<inputmask id="referenceInputmask" format="9999" />
+		<label value="Inputmask (rounded):" />
+		<inputmask id="roundedInputmask" format="9999" mold="rounded" />
+	</hbox>
+
+	<separator />
+	<grid hflex="min">
+		<columns>
+			<column label="Mask" width="260px" />
+			<column label="Inputmask" />
+			<column label="Log" width="260px" />
+		</columns>
+		<rows>
+			<row>
+				<label value="phone — 9999-999-9999" />
+				<inputmask id="phoneMask" format="9999-999-9999" placeholder="phone" />
+				<label />
+			</row>
+			<row>
+				<label value="letters then digits — aa-99" />
+				<inputmask id="lettersMask" format="aa-99" />
+				<label />
+			</row>
+			<row>
+				<label value="any + instant — ***-***" />
+				<inputmask id="anyMask" format="***-***" instant="true"
+						onChange='instantLog.setValue(instantLog.getValue() + ":" + self.getValue())' />
+				<label id="instantLog" value="" />
+			</row>
+			<row>
+				<label value="literal '9' then digit — \99" />
+				<inputmask id="literalMask" format="\99" />
+				<label />
+			</row>
+			<row>
+				<label value="strictFill=true (default) — partial fill + blur" />
+				<inputmask id="strictFillMask" format="9999"
+						onChange='clearLog.setValue("change:" + (self.getValue() == null ? "null" : self.getValue()))'
+						onError='strictErrorLog.setValue("error:" + event.getMessage())' />
+				<vlayout>
+					<label id="clearLog" value="" />
+					<label id="strictErrorLog" value="" />
+				</vlayout>
+			</row>
+			<row>
+				<label value="progress announcement (za11y)" />
+				<inputmask id="announceMask" format="9999" announceProgress="true" />
+				<inputmask id="announceOffMask" format="9999" />
+			</row>
+			<row>
+				<label value='placeholderChar="X" (breadth: custom slot char)' />
+				<inputmask id="slotCharMask" format="9999" placeholderChar="X" />
+				<label />
+			</row>
+			<row>
+				<label value="readonly=true" />
+				<inputmask id="readonlyMask" format="9999" readonly="true" />
+				<label />
+			</row>
+			<row>
+				<label value="disabled=true" />
+				<inputmask id="disabledMask" format="9999" disabled="true" />
+				<label />
+			</row>
+			<row>
+				<label value='setValue("1234") round-trip' />
+				<inputmask id="valueMask" format="9999" />
+				<button id="valueSetBtn" label="setValue('1234')"
+						onClick='valueMask.setValue("1234")' />
+			</row>
+			<row>
+				<label value="* (any) accepts alphanumeric, rejects symbols" />
+				<inputmask id="anyCharsMask" format="***" />
+				<label />
+			</row>
+			<row>
+				<label value="optional section — (999) 999-9999[ x999]" />
+				<inputmask id="optMask" format="(999) 999-9999[ x999]"
+						onChange='optLog.setValue("change:" + self.getValue() + "|" + self.getText())' />
+				<label id="optLog" value="" />
+			</row>
+			<row>
+				<label value='constraint="no empty" — server error on blur empty' />
+				<inputmask id="constraintMask" format="9999" constraint="no empty"
+						onError='constraintLog.setValue("error:" + event.getMessage())' />
+				<label id="constraintLog" value="" />
+			</row>
+			<row>
+				<label value="backspace clears slot" />
+				<inputmask id="backspaceMask" format="9999" />
+				<label />
+			</row>
+			<row>
+				<label value="edge: empty mask (no constraint)" />
+				<inputmask id="emptyMask" format="" />
+				<label />
+			</row>
+			<row>
+				<label value="edge: literal-only mask '---' (no slots)" />
+				<inputmask id="literalOnlyMask" format="---" />
+				<label />
+			</row>
+			<row>
+				<label value="edge: long mask (30 digit slots)" />
+				<inputmask id="longMask" format="999-999-999-999-999-999-999-999-99" />
+				<label />
+			</row>
+			<row>
+				<label value="isolation A — siblings must not cross-contaminate" />
+				<inputmask id="isolationA" format="9999" />
+				<label />
+			</row>
+			<row>
+				<label value="isolation B" />
+				<inputmask id="isolationB" format="aaaa" />
+				<label />
+			</row>
+			<row>
+				<label value="value edge cases — partial (raw) / invalid / over-length" />
+				<inputmask id="edgeValueMask" format="9999" />
+				<hbox>
+					<button id="setFullBtn" label='setValue("1234")'
+							onClick='edgeValueMask.setValue("1234")' />
+					<button id="setPartialBtn" label='setRawValue("12")'
+							onClick='edgeValueMask.setRawValue("12")' />
+					<button id="setInvalidBtn" label='setValue("abcd")'
+							onClick='edgeValueMask.setValue("abcd")' />
+					<button id="setOverBtn" label='setValue("12345")'
+							onClick='edgeValueMask.setValue("12345")' />
+					<button id="setNullBtn" label='setValue(null)'
+							onClick='edgeValueMask.setValue(null)' />
+				</hbox>
+			</row>
+			<row>
+				<label value="paste pipeline (real ClipboardEvent)" />
+				<inputmask id="pasteMask" format="9999-9999" />
+				<label />
+			</row>
+			<row>
+				<label value="RTL — direction:rtl style" />
+				<inputmask id="rtlMask" format="9999" style="direction: rtl;" />
+				<label />
+			</row>
+			<row>
+				<label value="trailing literal — (999)" />
+				<inputmask id="trailingLiteralMask" format="(999)"
+						onChange='trailingLog.setValue("change:" + self.getValue() + "|" + self.getText())' />
+				<label id="trailingLog" value="" />
+			</row>
+			<row>
+				<label value="instant + digit mask — rejected char keeps caret usable" />
+				<inputmask id="instantDigitMask" format="9999" instant="true"
+						onChange='instantDigitLog.setValue(instantDigitLog.getValue() + ":" + self.getValue())' />
+				<label id="instantDigitLog" value="" />
+			</row>
+			<row>
+				<label value="readonly with committed value" />
+				<inputmask id="readonlyValueMask" format="9999" readonly="true" value="1234"
+						onChange='readonlyLog.setValue("change:" + self.getValue())' />
+				<label id="readonlyLog" value="" />
+			</row>
+			<row>
+				<label value="already-formatted setValue" />
+				<inputmask id="unmaskValueMask" format="9999-999-9999" />
+				<button id="unmaskSetMaskedBtn" label='setValue("0912-345-6789")'
+						onClick='unmaskValueMask.setValue("0912-345-6789")' />
+			</row>
+			<row>
+				<label value="runtime setFormat remap — old value refits the new grid" />
+				<inputmask id="remaskMask" format="99-99" />
+				<button id="remaskBtn" label='setFormat("999-9")'
+						onClick='remaskMask.setFormat("999-9")' />
+			</row>
+			<row>
+				<label value="maxlength + mask — mutually exclusive, setter throws" />
+				<inputmask id="maxlenMask" format="9999"
+						onChange='maxlenLog.setValue("change:" + self.getValue())' />
+				<button id="maxlenBtn" label="setMaxlength(2)">
+					<attribute name="onClick">
+						try {
+							maxlenMask.setMaxlength(2);
+							maxlenLog.setValue("no-throw");
+						} catch (UnsupportedOperationException ex) {
+							maxlenLog.setValue("threw");
+						}
+					</attribute>
+				</button>
+				<label id="maxlenLog" value="" />
+			</row>
+			<row>
+				<label value="runtime setPlaceholderChar — repaint existing placeholder glyphs" />
+				<inputmask id="phcRuntimeMask" format="9999" strictFill="false" />
+				<button id="phcRuntimeBtn" label='setPlaceholderChar("#")'
+						onClick='phcRuntimeMask.setPlaceholderChar("#")' />
+			</row>
+			<row>
+				<label value="disabled=true — typing/paste blocked, no onChange (behavioral guard)" />
+				<inputmask id="disabledBehaviorMask" format="9999" disabled="true"
+						onChange='disabledBehaviorLog.setValue("change:" + self.getValue())' />
+				<label id="disabledBehaviorLog" value="" />
+			</row>
+			<row>
+				<label value="runtime setInstant(true) — commits without blur" />
+				<inputmask id="runtimeInstantMask" format="9999" instant="false"
+						onChange='runtimeInstantLog.setValue(runtimeInstantLog.getValue() + ":change:" + self.getValue())' />
+				<hbox>
+					<button id="runtimeInstantBtn" label="setInstant(true)"
+							onClick='runtimeInstantMask.setInstant(true)' />
+					<label id="runtimeInstantLog" value="" />
+				</hbox>
+			</row>
+			<row>
+				<label value="runtime setStrictFill(true) — revalidates the next blur" />
+				<inputmask id="runtimeStrictFillMask" format="9999" strictFill="false"
+						onChange='runtimeStrictFillLog.setValue("change:" + self.getValue())' />
+				<hbox>
+					<button id="runtimeStrictFillBtn" label="setStrictFill(true)"
+							onClick='runtimeStrictFillMask.setStrictFill(true)' />
+					<label id="runtimeStrictFillLog" value="" />
+				</hbox>
+			</row>
+			<row>
+				<label value="runtime setFormat(null) — reverts to plain textbox" />
+				<inputmask id="runtimeNullMaskMask" format="9999" />
+				<button id="runtimeNullMaskBtn" label="setFormat(null)"
+						onClick='runtimeNullMaskMask.setFormat(null)' />
+			</row>
+			<row>
+				<label value="runtime setFormat(null) keeps the value on both sides" />
+				<inputmask id="unmaskNullMask" format="99-99" value="1234"
+						onChange='unmaskNullLog.setValue("change:" + self.getValue())' />
+				<hbox>
+					<button id="unmaskNullBtn" label="setFormat(null)"
+							onClick='unmaskNullMask.setFormat(null); unmaskNullValueLog.setValue("value:" + unmaskNullMask.getValue())' />
+					<label id="unmaskNullValueLog" value="" />
+					<label id="unmaskNullLog" value="" />
+				</hbox>
+			</row>
+			<row>
+				<label value='constraint="no empty" + strictFill=false — partial fill behavior' />
+				<inputmask id="constraintNoclearMask" format="9999" constraint="no empty" strictFill="false"
+						onError='constraintNoclearLog.setValue("error:" + event.getMessage())' />
+				<label id="constraintNoclearLog" value="" />
+			</row>
+			<row>
+				<label value="format hint with a '$' literal" />
+				<inputmask id="currencyMask" format="$999.99" />
+				<label />
+			</row>
+			<row>
+				<label value="onChanging log" />
+				<inputmask id="changingMask" format="9999"
+						onChanging='changingLog.setValue(changingLog.getValue() + "|" + event.getValue())' />
+				<label id="changingLog" value="" />
+			</row>
+			<row>
+				<label value="onChanging debounce — 10 digits" />
+				<inputmask id="changingLongMask" format="(999) 999-9999"
+						onChanging='changingLongLog.setValue(changingLongLog.getValue() + "|" + event.getValue())' />
+				<label id="changingLongLog" value="" />
+			</row>
+			<row>
+				<label value="optional section before a required slot" />
+				<inputmask id="optionalMidMask" format="9999" />
+				<hbox>
+					<button id="optionalMidBtn" label='setFormat("+9[9][9] 999-9999")'>
+						<attribute name="onClick">
+							try {
+								optionalMidMask.setFormat("+9[9][9] 999-9999");
+								optionalMidLog.setValue("no-throw");
+							} catch (WrongValueException ex) {
+								optionalMidLog.setValue("threw");
+							}
+						</attribute>
+					</button>
+					<label id="optionalMidLog" value="" />
+				</hbox>
+			</row>
+			<row>
+				<label value="readonly partial value" />
+				<inputmask id="readonlyPartialMask" format="9999" readonly="true" value="12"
+						onChange='readonlyPartialLog.setValue("change:" + self.getValue())' />
+				<label id="readonlyPartialLog" value="" />
+			</row>
+			<row>
+				<label value='placeholderChar="0" collides with the 9 slots' />
+				<inputmask id="fillerCollisionMask" format="99:99" placeholderChar="0" />
+				<label />
+			</row>
+			<row>
+				<label value='placeholderChar="０" (full-width zero) collides with the 9 slots' />
+				<inputmask id="fullWidthFillerMask" format="9999" placeholderChar="０"
+						onChange='fullWidthFillerLog.setValue("change:" + self.getValue())' />
+				<label id="fullWidthFillerLog" value="" />
+			</row>
+			<row>
+				<label value='"aa-99" delete a letter mid-field' />
+				<inputmask id="mixedDeleteMask" format="aa-99" strictFill="false" value="AB12"
+						onChange='mixedDeleteLog.setValue("change:" + self.getValue())' />
+				<label id="mixedDeleteLog" value="" />
+			</row>
+			<row>
+				<label value='"99\99999" insert at the start' />
+				<inputmask id="escapedLiteralMask" format="99\99999" strictFill="false" value="1234"
+						onChange='escapedLiteralLog.setValue("change:" + self.getValue())' />
+				<label id="escapedLiteralLog" value="" />
+			</row>
+			<row>
+				<label value="value declared before format" />
+				<inputmask id="valueFirstMask" value="0912-345-6789" format="9999-999-9999"
+						onChange='valueFirstLog.setValue("change:" + self.getValue())' />
+				<label id="valueFirstLog" value="" />
+			</row>
+			<row>
+				<label value="forged client onChange" />
+				<inputmask id="forgedMask" format="9999"
+						onChange='forgedLog.setValue("change:" + self.getValue())' />
+				<label id="forgedLog" value="" />
+			</row>
+			<row>
+				<label value="runtime setFormat drops a value the new grid rejects" />
+				<inputmask id="refitMask" format="aaa" value="abc"
+						onChange='refitLog.setValue("change:" + self.getValue())' />
+				<hbox>
+					<button id="refitBtn" label='setFormat("999")'
+							onClick='refitMask.setFormat("999"); refitValueLog.setValue("value:" + refitMask.getValue())' />
+					<label id="refitValueLog" value="" />
+					<label id="refitLog" value="" />
+				</hbox>
+			</row>
+			<row>
+				<label value="empty masks inside an onOK ancestor" />
+				<div onOK='okLog.setValue("ok")'>
+					<inputmask id="readonlyOkMask" format="9999-9999" readonly="true" />
+					<inputmask id="emptyOkMask" format="9999" />
+				</div>
+				<label id="okLog" value="" />
+			</row>
+			<row>
+				<label value="CustomConstraint that accepts everything" />
+				<inputmask id="customCstMask" format="9999" constraint="${acceptAll}"
+						onChange='customCstLog.setValue("change:" + self.getValue())' />
+				<vlayout>
+					<label id="customCstLog" value="" />
+					<label id="customCstErrLog" value="" />
+				</vlayout>
+			</row>
+			<row>
+				<label value='value="12" before strictFill="false" / readonly="true"' />
+				<hbox>
+					<inputmask id="orderStrictMask" format="9999" value="12" strictFill="false" />
+					<inputmask id="orderReadonlyMask" format="9999" value="12" readonly="true" />
+				</hbox>
+				<label />
+			</row>
+			<row>
+				<label value='strictFill setValue("12")' />
+				<inputmask id="strictSetValueMask" format="9999" />
+				<hbox>
+					<button id="strictSetValueBtn" label='setValue("12"); getValue()'>
+						<attribute name="onClick">
+							try {
+								strictSetValueMask.setValue("12");
+								strictSetValueMask.getValue();
+								strictSetValueLog.setValue("accepted");
+							} catch (WrongValueException ex) {
+								strictSetValueLog.setValue("threw");
+							}
+						</attribute>
+					</button>
+					<label id="strictSetValueLog" value="" />
+				</hbox>
+			</row>
+			<row>
+				<label value="required literal after an optional section" />
+				<inputmask id="optionalLiteralMask" format="9999" />
+				<hbox>
+					<button id="optionalLiteralBtn" label='setFormat("99[.99]%")'>
+						<attribute name="onClick">
+							try {
+								optionalLiteralMask.setFormat("99[.99]%");
+								optionalLiteralLog.setValue("no-throw");
+							} catch (WrongValueException ex) {
+								optionalLiteralLog.setValue("threw");
+							}
+						</attribute>
+					</button>
+					<button id="optionalTrailingBtn" label='setFormat("99[.99]")'>
+						<attribute name="onClick">
+							try {
+								optionalLiteralMask.setFormat("99[.99]");
+								optionalLiteralLog.setValue("no-throw");
+							} catch (WrongValueException ex) {
+								optionalLiteralLog.setValue("threw");
+							}
+						</attribute>
+					</button>
+					<label id="optionalLiteralLog" value="" />
+				</hbox>
+			</row>
+			<row>
+				<label value="escaped literal + optional section in the error text" />
+				<inputmask id="rawSyntaxMask" format="\999[ x999]" />
+				<label />
+			</row>
+			<row>
+				<label value="instant + strictFill — debounced commit refuses a partial fill" />
+				<inputmask id="instantStrictMask" format="9999" instant="true"
+						onChange='instantStrictLog.setValue(instantStrictLog.getValue() + "|" + self.getValue())' />
+				<hbox>
+					<button id="instantStrictValueBtn" label="getRawValue()"
+							onClick='instantStrictValueLog.setValue("value:" + instantStrictMask.getRawValue())' />
+					<label id="instantStrictLog" value="" />
+					<label id="instantStrictValueLog" value="" />
+				</hbox>
+			</row>
+			<row>
+				<label value="textbox with an authored aria-describedby" />
+				<textbox id="authoredDescTextbox" ca:aria-describedby="authored-id" constraint="no empty" />
+				<label />
+			</row>
+			<row>
+				<label value="plain textbox with a constraint" />
+				<textbox id="plainCstTextbox" constraint="/^[0-9]*$/: digits only" />
+				<label />
+			</row>
+		</rows>
+	</grid>
+</zk>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.zkoss.org/2005/zul"
-	targetNamespace="http://www.zkoss.org/2005/zul" elementFormDefault="qualified" version="11.0.0.202608281758">
+	targetNamespace="http://www.zkoss.org/2005/zul" elementFormDefault="qualified" version="11.0.0.202609041509">
 	<!--
 	SIMPLETYPE
 	-->
@@ -906,6 +906,7 @@
 			<xs:element ref="imagemap" />
 			<xs:element ref="include" />
 			<xs:element ref="inputgroup" />
+			<xs:element ref="inputmask" />
 			<xs:element ref="intbox" />
 			<xs:element ref="jasperreport" />
 			<xs:element ref="label" />
@@ -1035,6 +1036,7 @@
 				<xs:element ref="imagemap" />
 				<xs:element ref="include" />
 				<xs:element ref="inputgroup" />
+				<xs:element ref="inputmask" />
 				<xs:element ref="intbox" />
 				<xs:element ref="jasperreport" />
 				<xs:element ref="label" />
@@ -4560,5 +4562,20 @@
 		<xs:attribute name="size" type="avatarSizeAttrType" use="optional" />
 		<xs:attribute name="shape" type="avatarShapeAttrType" use="optional" />
 		<xs:attributeGroup ref="rootAttrGroup" />
+	</xs:complexType>
+	<!-- inputmask -->
+	<xs:element name="inputmask" type="inputmaskType" />
+	<xs:complexType name="inputmaskType">
+		<xs:group ref="baseGroup" minOccurs="0" maxOccurs="unbounded" />
+		<xs:attributeGroup ref="formatInputElementAttrGroup" />
+		<xs:attribute name="constraint" type="constraintAttrType" use="optional" />
+		<xs:attribute name="value" type="xs:string" use="optional" />
+		<xs:attribute name="placeholderChar" type="xs:string" use="optional" />
+		<xs:attribute name="strictFill" type="booleanType" use="optional" />
+		<xs:attribute name="announceProgress" type="booleanType" use="optional" />
+		<xs:attributeGroup ref="rootAttrGroup" />
+		<xs:attribute name="errorMessage" type="xs:string" use="optional" />
+		<xs:attribute name="errorboxSclass" type="xs:string" use="optional" />
+		<xs:attribute name="errorboxIconSclass" type="xs:string" use="optional" />
 	</xs:complexType>
 </xs:schema>
