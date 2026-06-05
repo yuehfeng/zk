@@ -17,6 +17,7 @@ ZK 11.0.0
   ZK-6056: Configurable Filter Logic for Chosenbox with ListSubModel
   ZK-6096: Component-level stubonly Policy (Conditional Inheritance)
   ZK-6085: WCAG 2.2 AA Feasibility Study
+  ZK-6106: Add Inputmask to PE
 
 * Bugs
   ZK-5670: org.zkoss.zul.progressbox.position doesn't take effect in an embedded zul
