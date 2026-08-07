@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+B110-ZK-6066.zul
+
+        Purpose:
+
+        Description:
+
+        History:
+                Fri Aug 07 12:40:58 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk xmlns="http://www.zkoss.org/2005/zul">
+	<vlayout spacing="10px" style="padding:16px;">
+		<label value="Run with the za11y module. The mold node of the switch/toggle
+			checkbox must carry role/aria-* values without extra double quotes."/>
+		<hlayout spacing="8px">
+			<label value="default:"/>
+			<checkbox id="cbDefault" label="Receive notifications"/>
+		</hlayout>
+		<hlayout spacing="8px">
+			<label value="switch:"/>
+			<checkbox id="cbSwitch" mold="switch" label="Receive notifications"/>
+		</hlayout>
+		<hlayout spacing="8px">
+			<label value="switch (checked, disabled):"/>
+			<checkbox id="cbSwitchOn" mold="switch" checked="true" disabled="true"
+				label="Receive notifications"/>
+		</hlayout>
+		<hlayout spacing="8px">
+			<label value="toggle:"/>
+			<checkbox id="cbToggle" mold="toggle" label="Receive notifications"/>
+		</hlayout>
+	</vlayout>
+</zk>
