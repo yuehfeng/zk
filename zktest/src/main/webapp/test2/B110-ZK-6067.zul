@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+B110-ZK-6067.zul
+
+        Purpose:
+
+        Description:
+
+        History:
+                Fri Aug 07 14:51:52 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk xmlns="http://www.zkoss.org/2005/zul">
+	<vlayout spacing="10px" style="padding:16px;">
+		<label value="Each checkbox must expose exactly one label element to its
+			form field. Scan with aXe rule form-field-multiple-labels."/>
+		<hlayout spacing="8px">
+			<label value="default:"/>
+			<checkbox id="cbDefault" label="Receive notifications"/>
+		</hlayout>
+		<hlayout spacing="8px">
+			<label value="tristate:"/>
+			<checkbox id="cbTristate" mold="tristate" label="Receive notifications"/>
+		</hlayout>
+		<hlayout spacing="8px">
+			<label value="switch:"/>
+			<checkbox id="cbSwitch" mold="switch" label="Receive notifications"/>
+		</hlayout>
+		<hlayout spacing="8px">
+			<label value="toggle:"/>
+			<checkbox id="cbToggle" mold="toggle" label="Receive notifications"/>
+		</hlayout>
+	</vlayout>
+</zk>

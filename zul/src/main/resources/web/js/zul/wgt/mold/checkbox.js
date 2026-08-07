@@ -13,11 +13,13 @@ This program is distributed under LGPL Version 2.1 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 function checkbox$mold$(out) {
-	var uuid = this.uuid;
+	var uuid = this.uuid,
+		moldTag = !this._isDefaultMold() && !this._isTristateMold() ? 'label' : 'span';
 	//tabindex attribute will be set in input element
 	out.push('<span', this.domAttrs_({tabindex: 1}), '>');
 	out.push('<input type="checkbox" id="', uuid, '-real"', /*safe*/ this.contentAttrs_(), '></input>');
-	out.push('<label for="', uuid, '-real" id="', uuid, '-mold" class="', this.$s('mold'), '" ', /*safe*/ this._moldA11yAttrs(), '></label>');
+	out.push('<', moldTag, moldTag === 'label' ? ' for="' + uuid + '-real"' : '',
+		' id="', uuid, '-mold" class="', this.$s('mold'), '" ', /*safe*/ this._moldA11yAttrs(), '></', moldTag, '>');
 	out.push('<label for="', uuid, '-real" id="', uuid, '-cnt"', this.domTextStyleAttr_(),
 		' class="', this.$s('content'), '">');
 	out.push(this.domContent_(), '</label></span>');
