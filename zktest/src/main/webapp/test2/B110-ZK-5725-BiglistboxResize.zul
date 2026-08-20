@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-BiglistboxResize.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<zscript><![CDATA[
+	class HeadlessMatrixModel extends AbstractListModel implements MatrixModel {
+		public Object getElementAt(int index) {
+			return "row" + index;
+		}
+		public int getSize() {
+			return 20;
+		}
+		public int getColumnSize() {
+			return 6;
+		}
+		// no header row at all, so the whole head block is left out of the DOM
+		public int getHeadSize() {
+			return 0;
+		}
+		public Object getHeadAt(int rowIndex) {
+			return null;
+		}
+		public Object getCellAt(Object rowData, int columnIndex) {
+			return rowData + "-" + columnIndex;
+		}
+		public Object getHeaderAt(Object headData, int columnIndex) {
+			return null;
+		}
+	}
+	HeadlessMatrixModel model = new HeadlessMatrixModel();
+	]]></zscript>
+
+	<label multiline="true">
+		A matrix model without any header row draws no head, so the frozen head shim is not in the
+		DOM either, while the four other frozen nodes are.
+		1. There should be no error box and no JS error in the console (F12).
+		2. Click "resize". The layout stays intact: the frozen columns keep their own area and the
+		   vertical bar tick sits at the border between the frozen and the scrolling columns.
+	</label>
+
+	<biglistbox id="blb" model="${model}" frozenCols="2" colWidth="100px" width="400px"
+			height="200px"/>
+	<button id="resize" label="resize" onClick="Clients.resize(blb)"/>
+</zk>

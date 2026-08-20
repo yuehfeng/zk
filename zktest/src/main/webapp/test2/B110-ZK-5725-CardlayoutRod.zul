@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(evt.message)window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-CardlayoutRod.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		The cardlayout sits in a render-deferred container, so it is known to the client but has
+		no DOM. Removing a card still asks the cardlayout to reposition its siblings.
+		1. Click "remove the middle card". There should be no error and no alert.
+		2. Nothing is drawn on this page, the container never renders on purpose.
+	</label>
+
+	<div renderdefer="600000">
+		<cardlayout id="cl" width="300px" height="200px" selectedIndex="2">
+			<div id="c0" height="100%">card 0</div>
+			<div id="c1" height="100%">card 1</div>
+			<div id="c2" height="100%">card 2</div>
+		</cardlayout>
+	</div>
+
+	<button id="rm" label="remove the middle card">
+		<attribute name="onClick">
+			c1.detach();
+			done.setValue("removed");
+		</attribute>
+	</button>
+	<!-- the removal and this label travel in the same response, so a client side throw
+	     while removing swallows the label update as well -->
+	<label id="done" value="not clicked yet"/>
+</zk>

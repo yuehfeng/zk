@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(evt.message)window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-TouchPopup.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		Open this page with an iPhone user agent. The tablet molds delay the popup placement
+		by 50ms; the button below opens a popup and unbinds the widget within that window,
+		which is what happens when the server replaces the widget right after it was opened.
+		Click every button. There should be no error in the console (F12).
+	</label>
+
+	<datebox id="db" width="180px"/>
+	<button id="bdb" label="1 datebox">
+		<attribute name="onClick"><![CDATA[
+			Clients.evalJavaScript("var w = zk.Widget.$('$db'); w.setOpen(true); w.unbind();");
+		]]></attribute>
+	</button>
+
+	<timebox id="tbx" width="180px"/>
+	<button id="btbx" label="2 timebox">
+		<attribute name="onClick"><![CDATA[
+			Clients.evalJavaScript("var w = zk.Widget.$('$tbx'); w.setOpen(true); w.unbind();");
+		]]></attribute>
+	</button>
+
+	<combobox id="cb" width="180px">
+		<comboitem label="a"/>
+		<comboitem label="b"/>
+	</combobox>
+	<button id="bcb" label="3 combobox">
+		<attribute name="onClick"><![CDATA[
+			Clients.evalJavaScript("var w = zk.Widget.$('$cb'); w.setOpen(true); w.unbind();");
+		]]></attribute>
+	</button>
+
+	<timepicker id="tp" width="180px"/>
+	<button id="btp" label="4 timepicker">
+		<attribute name="onClick"><![CDATA[
+			Clients.evalJavaScript("var w = zk.Widget.$('$tp'); w.open(); w.unbind();");
+		]]></attribute>
+	</button>
+</zk>

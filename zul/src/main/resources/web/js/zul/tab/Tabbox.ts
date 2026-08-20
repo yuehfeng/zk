@@ -336,8 +336,12 @@ export class Tabbox extends zul.Widget {
 		if (this.inAccordionMold())
 			zWatch.listen({onResponse: this});
 		else if (toolbar && this.getTabs()) {
-			zWatch.listen({onResponse: this});
-			this._toolbarWidth = jq(toolbar.$n_()).width();
+			// the toolbar is drawn only when tabscroll is on
+			const toolbarNode = toolbar.$n();
+			if (toolbarNode) {
+				zWatch.listen({onResponse: this});
+				this._toolbarWidth = jq(toolbarNode).width();
+			}
 		}
 
 		for (var key = ['right', 'left', 'down', 'up'], le = key.length; le--;) {

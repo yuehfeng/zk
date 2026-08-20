@@ -123,7 +123,10 @@ export class Radio extends zul.wgt.Checkbox {
 									jq(item).removeAttr('checked');
 								}
 								items[i].clearStateClassName_();
-								jq(items[i].$n_()).addClass(this.$s(this.getMoldPrefix_() + 'off'));
+								// the radio might not be rendered yet, its state is still updated
+								const itemNode = items[i].$n();
+								if (itemNode)
+									jq(itemNode).addClass(this.$s(this.getMoldPrefix_() + 'off'));
 								items[i]._checked = false;
 							}
 						}

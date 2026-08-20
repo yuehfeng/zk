@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);var b=document.getElementById('zk5725-errors');if(!b){b=document.createElement('pre');b.id='zk5725-errors';b.style.color='red';document.body.appendChild(b);}b.textContent='errors: '+window.zk5725Errors.length+' | '+window.zk5725Errors.join(' | ');});"?>
+<!--
+B110-ZK-5725-ToolbarUpload.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Fri Aug 21 10:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		A tabbox only draws its toolbar when tabscroll is on, so the two buttons below are live
+		widgets without a node. An upload builds its file input next to that node, so it must not
+		be built at all while the button is not drawn.
+		1. There should be no JS error in the console (F12) right after the page shows up.
+		2. Click "disable" then "enable": still no JS error, and the label keeps counting up, which
+		   proves the rest of each response still runs.
+		3. The control toolbar is drawn: both of its buttons carry a file input, and clicking
+		   "browse" opens the file dialog.
+	</label>
+
+	<tabbox id="tbx" tabscroll="false" width="400px">
+		<toolbar id="tb">
+			<toolbarbutton id="tbbUpload" label="never drawn upload" upload="true"/>
+			<button id="btnUpload" label="never drawn button upload" upload="true"/>
+		</toolbar>
+		<tabs>
+			<tab id="tab1" label="first"/>
+			<tab id="tab2" label="second"/>
+		</tabs>
+		<tabpanels>
+			<tabpanel><label id="panel1" value="content of the first panel"/></tabpanel>
+			<tabpanel><label id="panel2" value="content of the second panel"/></tabpanel>
+		</tabpanels>
+	</tabbox>
+
+	<zscript><![CDATA[
+		int count = 0;
+	]]></zscript>
+	<button id="disable" label="disable"
+			onClick='tbbUpload.setDisabled(true); btnUpload.setDisabled(true); done.setValue("responses completed: " + (++count));'/>
+	<button id="enable" label="enable"
+			onClick='tbbUpload.setDisabled(false); btnUpload.setDisabled(false); done.setValue("responses completed: " + (++count));'/>
+	<label id="done" value="responses completed: 0"/>
+
+	<separator/>
+	<label value="control: the same two buttons in a drawn toolbar"/>
+	<toolbar id="tbCtrl">
+		<toolbarbutton id="tbbCtrl" label="drawn upload" upload="true"/>
+		<button id="btnCtrl" label="drawn button upload" upload="true"/>
+	</toolbar>
+</zk>

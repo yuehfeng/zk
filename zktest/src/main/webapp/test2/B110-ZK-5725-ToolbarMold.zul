@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);var b=document.getElementById('zk5725-errors');if(!b){b=document.createElement('pre');b.id='zk5725-errors';b.style.color='red';document.body.appendChild(b);}b.textContent='errors: '+window.zk5725Errors.length+' | '+window.zk5725Errors.join(' | ');});"?>
+<!--
+B110-ZK-5725-ToolbarMold.zul
+
+        Purpose:
+
+        Description:
+
+        History:
+                Thu Aug 20 15:20:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+    <label multiline="true">
+        overflowPopup renders its button and its popup in the default mold only, so a toolbar that
+        carries overflowPopup="true" but is never drawn with that mold used to abort the whole mount.
+        1. There should be no JS error in the console (F12).
+        2. The "panel mold" toolbar below shows its three buttons (it simply has no overflow popup).
+        3. The tabbox is fully usable: click "second" and the second panel shows. Its toolbar is not
+           drawn at all, because a tabbox only draws its toolbar when tabscroll is on.
+        4. The last toolbar keeps a working overflow popup: click the ellipsis and the popup opens.
+    </label>
+
+    <separator/>
+    <label value="1. panel mold + overflowPopup"/>
+    <toolbar id="tbPanel" mold="panel" overflowPopup="true" width="150px">
+        <toolbarbutton id="panelBtn" label="alpha"/>
+        <toolbarbutton label="beta"/>
+        <toolbarbutton label="gamma"/>
+    </toolbar>
+
+    <separator/>
+    <label value="2. toolbar in a tabbox with tabscroll=false"/>
+    <tabbox id="tbx" tabscroll="false" width="400px">
+        <toolbar id="tbTabbox" overflowPopup="true">
+            <toolbarbutton label="never drawn"/>
+        </toolbar>
+        <tabs>
+            <tab id="tab1" label="first"/>
+            <tab id="tab2" label="second"/>
+        </tabs>
+        <tabpanels>
+            <tabpanel><label id="panel1" value="content of the first panel"/></tabpanel>
+            <tabpanel><label id="panel2" value="content of the second panel"/></tabpanel>
+        </tabpanels>
+    </tabbox>
+
+    <separator/>
+    <label value="3. control: default mold, overflowPopup still works"/>
+    <toolbar id="tbDefault" overflowPopup="true" width="150px">
+        <toolbarbutton label="one"/>
+        <toolbarbutton label="two"/>
+        <toolbarbutton label="three"/>
+        <toolbarbutton label="four"/>
+    </toolbar>
+</zk>

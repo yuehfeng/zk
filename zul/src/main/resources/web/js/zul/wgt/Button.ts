@@ -201,8 +201,10 @@ export class Button extends zul.LabelImageWidget<HTMLButtonElement> implements z
 
 		if (oldDisabled !== value || opts?.force) {
 			var doDisable = (): void => {
-					if (this.desktop) {
-						jq(this.$n()).attr('disabled', value ? 'disabled' : null); // use jQuery's attr() instead of dom.disabled for non-button element. Bug ZK-2146
+					// a toolbar that its parent never draws leaves its children without a node
+					const n = this.$n();
+					if (n) {
+						jq(n).attr('disabled', value ? 'disabled' : null); // use jQuery's attr() instead of dom.disabled for non-button element. Bug ZK-2146
 						// B70-ZK-2059: Initialize or clear upload when disabled attribute changes.
 						if (this._upload)
 							value ? _cleanUpld(this) : _initUpld(this);
@@ -392,21 +394,26 @@ export class Button extends zul.LabelImageWidget<HTMLButtonElement> implements z
 	override bind_(desktop?: zk.Desktop, skipper?: zk.Skipper, after?: CallableFunction[]): void {
 		super.bind_(desktop, skipper, after);
 
-		var n = this.$n()!;
-		this.domListen_(n, 'onFocus', 'doFocus_')
-			.domListen_(n, 'onBlur', 'doBlur_');
+		// a toolbar that its parent never draws leaves its children without a node,
+		// and the uploader builds its file input next to that node
+		var n = this.$n();
+		if (n) {
+			this.domListen_(n, 'onFocus', 'doFocus_')
+				.domListen_(n, 'onBlur', 'doBlur_');
+			if (!this._disabled && this._upload) _initUpld(this);
+		}
 		zWatch.listen({onShow: this});
-
-		if (!this._disabled && this._upload) _initUpld(this);
 	}
 
 	/** @internal */
 	override unbind_(skipper?: zk.Skipper, after?: CallableFunction[], keepRod?: boolean): void {
 		_cleanUpld(this);
 
-		var n = this.$n()!;
-		this.domUnlisten_(n, 'onFocus', 'doFocus_')
-			.domUnlisten_(n, 'onBlur', 'doBlur_');
+		var n = this.$n();
+		if (n) {
+			this.domUnlisten_(n, 'onFocus', 'doFocus_')
+				.domUnlisten_(n, 'onBlur', 'doBlur_');
+		}
 		zWatch.unlisten({onShow: this});
 
 		super.unbind_(skipper, after, keepRod);

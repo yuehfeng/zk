@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);var b=document.getElementById('zk5725-errors');if(!b){b=document.createElement('pre');b.id='zk5725-errors';b.style.color='red';document.body.appendChild(b);}b.textContent='errors: '+window.zk5725Errors.length+' | '+window.zk5725Errors.join(' | ');});"?>
+<!--
+B110-ZK-5725-Auxhead.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 17:30:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		Hiding a header re-measures the body against the header row, which a grid without columns
+		never draws.
+		1. Click "hide the auxhead": nothing changes on screen and there should be no JS error in
+		   the console (F12).
+		2. In the control grid, "hide the control auxhead" hides its auxhead row and the rows below
+		   stay where they are.
+	</label>
+
+	<label value="1. an auxhead in a grid that has no columns"/>
+	<grid id="g" height="150px">
+		<auxhead id="ah">
+			<auxheader label="A"/>
+		</auxhead>
+		<rows>
+			<row><label value="r1"/></row>
+			<row><label value="r2"/></row>
+		</rows>
+	</grid>
+	<button id="hide" label="hide the auxhead" onClick="ah.setVisible(false)"/>
+
+	<separator/>
+	<label value="2. control: the same auxhead in a grid that has columns"/>
+	<grid id="gCtrl" height="150px">
+		<auxhead id="ahCtrl">
+			<auxheader label="A"/>
+		</auxhead>
+		<columns>
+			<column label="c"/>
+		</columns>
+		<rows>
+			<row><label value="r1"/></row>
+			<row><label value="r2"/></row>
+		</rows>
+	</grid>
+	<button id="hideCtrl" label="hide the control auxhead" onClick="ahCtrl.setVisible(false)"/>
+</zk>

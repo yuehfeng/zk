@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+B110-ZK-5725-LayoutRegion.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 16:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		Removing a nested borderlayout tells its region to drop the "nested" style class, which the
+		region must not do when it has no DOM node of its own.
+		1. Click "detach inner". There should be no error box and no JS error in the console (F12).
+		2. The outer borderlayout is inside a render-deferred div, so nothing is drawn during the
+		   test; the page stays empty apart from the button.
+	</label>
+
+	<!-- renderdefer keeps the whole borderlayout bound but without any DOM node -->
+	<div renderdefer="600000">
+		<borderlayout id="outer" height="200px">
+			<center id="c" border="none">
+				<borderlayout id="inner">
+					<center border="none">
+						<label value="x"/>
+					</center>
+				</borderlayout>
+			</center>
+		</borderlayout>
+	</div>
+
+	<button id="detach" label="detach inner" onClick="inner.detach()"/>
+</zk>

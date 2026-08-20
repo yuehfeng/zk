@@ -97,13 +97,18 @@ export class HeadWidget extends zul.Widget<HTMLTableRowElement> {
 			setTimeout(function () {
 				// ZK-2217: fix height if mesh.desktop exists
 				if (mesh && mesh.desktop) {
+					// a mesh that has an auxhead but no columns draws no head at all
+					var ehead = mesh.$n('head');
+					if (!ehead)
+						return;
 					// ZK-2130: should fix ebody height
 					// ZK-2217: should contain foot and paging
 					var foot = mesh.$n('foot'),
 						pgib = mesh.$n('pgib'),
-						hgh = zk(mesh).contentHeight() - mesh.$n_('head').offsetHeight
+						frozen = mesh._nativebar && mesh.frozen ? mesh.frozen.$n() : undefined,
+						hgh = zk(mesh).contentHeight() - ehead.offsetHeight
 							- (foot ? foot.offsetHeight : 0) - (pgib ? pgib.offsetHeight : 0)
-							- (mesh._nativebar && mesh.frozen ? mesh.frozen.$n_().offsetHeight : 0);
+							- (frozen ? frozen.offsetHeight : 0);
 					mesh.ebody!.style.height = jq.px0(hgh);
 				}
 			}, 0);
@@ -250,6 +255,9 @@ export class HeadWidget extends zul.Widget<HTMLTableRowElement> {
 							jq(head.$n_('hdfaker')).append(/*safe*/ '<col id="' + /*safe*/ head.uuid +
 								'-hdfaker-bar" style="' + hdfakerbarstyle + '" ></col>');
 						jq(head).append(/*safe*/ '<th id="' + /*safe*/ head.uuid + '-bar" class="' + head.$s('bar') + '" style="' + /*safe*/ barstyle + '" ></th>');
+						// the two nodes are new, so a cached "not there" would hide them for good
+						delete head._subnodes['hdfaker-bar'];
+						delete head._subnodes.bar;
 					}
 				}
 			}

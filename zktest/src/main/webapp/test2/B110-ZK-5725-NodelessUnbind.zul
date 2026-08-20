@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-NodelessUnbind.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Mon Aug 25 10:40:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		A tabbox that does not scroll its tabs never draws its toolbar, so the buttons inside it are
+		bound without a node. Taking them away again, or asking one of them for the focus, must
+		cope with the node that was never there.
+		1. Click "focus the button that was never drawn". No error popup appears and there is no JS
+		   error in the console (F12); the label keeps counting up.
+		2. Click "detach the tabbox". Its buttons unbind without a node and the label counts up
+		   again.
+		3. The control tabbox below is drawn: detaching it removes a real toolbar, which proves the
+		   same path still works for a normal toolbar.
+	</label>
+
+	<zscript><![CDATA[
+		int count = 0;
+	]]></zscript>
+
+	<tabbox id="tbx" tabscroll="false" width="400px">
+		<toolbar id="tb">
+			<toolbarbutton id="tbb" label="never drawn" tabindex="1"/>
+			<button id="btn" label="never drawn button"/>
+		</toolbar>
+		<tabs><tab id="tab1" label="first"/></tabs>
+		<tabpanels><tabpanel><label value="content"/></tabpanel></tabpanels>
+	</tabbox>
+
+	<button id="focusIt" label="focus the button that was never drawn"
+			onClick='tbb.focus(); done.setValue("responses completed: " + (++count));'/>
+	<button id="detachIt" label="detach the tabbox"
+			onClick='tbx.detach(); done.setValue("responses completed: " + (++count));'/>
+	<label id="done" value="responses completed: 0"/>
+
+	<separator/>
+	<label value="control: the same widgets in a drawn toolbar"/>
+	<tabbox id="tbxCtrl" tabscroll="true" width="400px">
+		<toolbar id="tbCtrl">
+			<toolbarbutton id="tbbCtrl" label="drawn" tabindex="1"/>
+			<button id="btnCtrl" label="drawn button"/>
+		</toolbar>
+		<tabs><tab id="tab1Ctrl" label="first"/></tabs>
+		<tabpanels><tabpanel><label value="content"/></tabpanel></tabpanels>
+	</tabbox>
+	<button id="detachCtrl" label="detach the control tabbox" onClick="tbxCtrl.detach()"/>
+</zk>

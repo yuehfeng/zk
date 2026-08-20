@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-BiglistboxArrows.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Mon Aug 25 10:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<zscript><![CDATA[
+	class WideMatrixModel extends AbstractListModel implements MatrixModel {
+		public Object getElementAt(int index) {
+			return "row" + index;
+		}
+		public int getSize() {
+			return 40;
+		}
+		public int getColumnSize() {
+			return 12;
+		}
+		public int getHeadSize() {
+			return 1;
+		}
+		public Object getHeadAt(int rowIndex) {
+			return "head" + rowIndex;
+		}
+		public Object getCellAt(Object rowData, int columnIndex) {
+			return rowData + "-" + columnIndex;
+		}
+		public Object getHeaderAt(Object headData, int columnIndex) {
+			return "col" + columnIndex;
+		}
+	}
+	WideMatrixModel model = new WideMatrixModel();
+	]]></zscript>
+
+	<label multiline="true">
+		frozenCols defaults to 0, so this biglistbox draws neither -colsfx nor -rowsfx, and it is
+		wider and taller than its viewport, so the arrow keys have to scroll it.
+		1. Click the cell "row0-0", then press the right arrow until the focus walks past the last
+		   visible column. The grid scrolls sideways and there is no JS error in the console (F12).
+		2. Press the left arrow the same number of times to walk back to the first column. Walking
+		   off the left edge must not look for the frozen block that is not there.
+		3. Press the down arrow until the selection leaves the rows that are actually drawn. The
+		   list scrolls down instead of throwing.
+	</label>
+
+	<biglistbox id="blb" model="${model}" colWidth="100px" width="400px" height="200px"/>
+</zk>

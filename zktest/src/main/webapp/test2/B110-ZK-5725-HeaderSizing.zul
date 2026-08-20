@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);var b=document.getElementById('zk5725-errors');if(!b){b=document.createElement('pre');b.id='zk5725-errors';b.style.color='red';document.body.appendChild(b);}b.textContent='errors: '+window.zk5725Errors.length+' | '+window.zk5725Errors.join(' | ');});"?>
+<!--
+B110-ZK-5725-HeaderSizing.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 17:30:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<!-- without a native scrollbar the header row carries no filler cell at its end -->
+	<custom-attributes org.zkoss.zul.nativebar="false"/>
+	<label multiline="true">
+		Sizing a column re-enables the header filler cell, which a grid drawn without a native
+		scrollbar never had.
+		1. Drag the right border of column A, or double click it. The column resizes and there
+		   should be no JS error in the console (F12).
+		2. Click "add a column": column D appears and sizing keeps working.
+	</label>
+
+	<grid id="g" width="400px" height="150px">
+		<columns id="cols" sizable="true">
+			<column id="c1" label="A" hflex="1"/>
+			<column id="c2" label="B" hflex="1"/>
+			<column id="c3" label="C" hflex="1"/>
+		</columns>
+		<rows>
+			<row><label value="a1"/><label value="b1"/><label value="c1"/></row>
+			<row><label value="a2"/><label value="b2"/><label value="c2"/></row>
+		</rows>
+	</grid>
+	<button id="addcol" label="add a column" onClick='new Column("D").setParent(cols)'/>
+</zk>

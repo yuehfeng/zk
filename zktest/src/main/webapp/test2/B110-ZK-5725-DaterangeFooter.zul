@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message+' @'+evt.filename+':'+evt.lineno+':'+evt.colno+((evt.error&&evt.error.stack)?' '+evt.error.stack:''));});window.zk5725Rejections=[];window.addEventListener('unhandledrejection',function(evt){var r=evt.reason;window.zk5725Rejections.push(String((r&&r.stack)||r));});"?>
+<!--
+B110-ZK-5725-DaterangeFooter.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 21:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		The Today button of the daterange popup is drawn only when showTodayLink is on, so a
+		showTodayLink flip that the popup could not act on must not make the next bind demand the
+		-today node.
+		1. Click the calendar button. The popup opens without a Today button.
+		2. Click "today on". The Today button shows up and there is no error box.
+	</label>
+
+	<daterangebox id="drb" format="yyyy-MM-dd" width="360px"/>
+	<button id="todayOn" label="today on" onClick="drb.setShowTodayLink(true)"/>
+</zk>

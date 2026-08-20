@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message+' @'+evt.filename+':'+evt.lineno+':'+evt.colno+((evt.error&&evt.error.stack)?' '+evt.error.stack:''));});window.zk5725Rejections=[];window.addEventListener('unhandledrejection',function(evt){var r=evt.reason;window.zk5725Rejections.push(String((r&&r.stack)||r));});"?>
+<!--
+B110-ZK-5725-PdfviewerPage.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 21:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk xmlns:w="client">
+	<label multiline="true">
+		A page that is queued while another one is still rendering is fetched from a promise
+		continuation, which runs even after the viewer has been detached. The a11y page label must
+		not demand the -content node there.
+		1. The first viewer detaches itself as soon as its first page is rendered. No error box
+		   shows up.
+		2. The second viewer keeps working and its canvas carries aria-label="#1".
+	</label>
+
+	<div id="holder">
+		<pdfviewer id="pv" height="300px" src="/test2/B96-ZK-5426.pdf">
+			<attribute w:name="_handleAfterPageRendering">
+				function (pdfFirstRender) {
+					if (!window.zk5725Detached &amp;&amp; this._pdf) {
+						// page 2 was queued while page 1 was still rendering, and the container
+						// closed in the same tick
+						window.zk5725Detached = true;
+						this._shouldZoomFit = '';
+						this._pendingPageNum = 2;
+						this.detach();
+						this.$_handleAfterPageRendering(false);
+						return;
+					}
+					this.$_handleAfterPageRendering(pdfFirstRender);
+				}
+			</attribute>
+		</pdfviewer>
+	</div>
+
+	<pdfviewer id="pvOk" height="300px" src="/test2/B96-ZK-5426.pdf"/>
+</zk>

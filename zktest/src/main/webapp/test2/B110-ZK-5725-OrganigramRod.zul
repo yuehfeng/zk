@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+B110-ZK-5725-OrganigramRod.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		A closed orgitem keeps its children in ROD. A rerender draws them for real, so the ROD state
+		must be dropped, otherwise opening the orgitem appends a second copy of every child.
+		1. Click "1 rerender the children". Nothing visible changes.
+		2. Click "2 open the orgitem". Exactly two children ("c1" and "c2") show up.
+	</label>
+
+	<organigram id="og">
+		<orgchildren>
+			<orgitem id="oi" open="false">
+				<orgnode label="root"/>
+				<orgchildren id="oc">
+					<orgitem><orgnode label="c1"/></orgitem>
+					<orgitem><orgnode label="c2"/></orgitem>
+				</orgchildren>
+			</orgitem>
+		</orgchildren>
+	</organigram>
+
+	<button id="rerender" label="1 rerender the children" onClick='oc.setZclass("z-orgchildren")'/>
+	<button id="open" label="2 open the orgitem" onClick="oi.setOpen(true)"/>
+</zk>

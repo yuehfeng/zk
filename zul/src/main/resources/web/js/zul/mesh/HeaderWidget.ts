@@ -684,7 +684,11 @@ export abstract class HeaderWidget extends zul.LabelImageWidget<HTMLTableCellEle
 
 		if (cssflex) {
 			// re-enable head's colgruop and head-bar
-			mesh.head!.$n_('hdfaker').style.display = mesh.head!.$n_('bar').style.display = '';
+			// a mesh drawn without a native scrollbar has no head-bar
+			const headBar = mesh.head!.$n('bar');
+			mesh.head!.$n_('hdfaker').style.display = '';
+			if (headBar)
+				headBar.style.display = '';
 		}
 
 

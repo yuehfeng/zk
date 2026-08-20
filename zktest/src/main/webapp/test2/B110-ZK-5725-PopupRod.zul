@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(evt.message)window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-PopupRod.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		A closed groupbox keeps its content in ROD, so the menupopup below has no DOM node at all.
+		Opening it has to render the container first instead of replacing a node that does not exist.
+		1. Click "open the popup". There should be no error in the console (F12).
+		2. The popup shows the two menu items.
+	</label>
+
+	<groupbox id="gb" open="false" width="300px">
+		<caption label="a closed groupbox"/>
+		<menupopup id="mp">
+			<menuitem id="mi1" label="a"/>
+			<menuitem id="mi2" label="b"/>
+		</menupopup>
+		<label id="inside" value="content of the groupbox"/>
+	</groupbox>
+
+	<button id="op" label="open the popup" popup="mp"/>
+</zk>

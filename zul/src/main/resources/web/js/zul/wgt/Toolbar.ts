@@ -50,6 +50,8 @@ export class Toolbar extends zul.Widget {
 	_overflowPopup?: boolean;
 	/** @internal */
 	_open?: boolean;
+	/** @internal */
+	_adjustContentTimer?: number;
 
 	/**
 	 * @returns the alignment of any children added to this toolbar. Valid values
@@ -161,14 +163,20 @@ export class Toolbar extends zul.Widget {
 	/** @internal */
 	override bind_(desktop?: zk.Desktop, skipper?: zk.Skipper, after?: CallableFunction[]): void {
 		super.bind_(desktop, skipper, after);
-		if (this.isOverflowPopup()) {
+		// the overflow popup belongs to the default mold only
+		const button = this.$n('overflowpopup-button');
+		if (this.isOverflowPopup() && button) {
 			zWatch.listen({ onFloatUp: this, onCommandReady: this, onSize: this });
-			this.domListen_(this.$n_('overflowpopup-button'), 'onClick', '_openPopup');
+			this.domListen_(button, 'onClick', '_openPopup');
 		}
 	}
 
 	/** @internal */
 	override unbind_(skipper?: zk.Skipper, after?: CallableFunction[], keepRod?: boolean): void {
+		if (this._adjustContentTimer) {
+			clearTimeout(this._adjustContentTimer);
+			this._adjustContentTimer = undefined;
+		}
 		const popup = this.$n('pp');
 		if (popup) {
 			this.domUnlisten_(this.$n_('overflowpopup-button'), 'onClick', '_openPopup');
@@ -234,8 +242,18 @@ export class Toolbar extends zul.Widget {
 
 	/** @internal */
 	_adjustContent(): void {
+		// every run owns the postponed one, whether it is resuming it or replacing it
+		if (this._adjustContentTimer) {
+			clearTimeout(this._adjustContentTimer);
+			this._adjustContentTimer = undefined;
+		}
+
+		// the postponed run below can resume after the toolbar is gone or its popup is turned off
+		if (!this.desktop || !this.isOverflowPopup())
+			return;
+
 		if (zUtl.isImageLoading()) {
-			setTimeout(this.proxy(this._adjustContent), 20);
+			this._adjustContentTimer = setTimeout(this.proxy(this._adjustContent), 20);
 			return;
 		}
 

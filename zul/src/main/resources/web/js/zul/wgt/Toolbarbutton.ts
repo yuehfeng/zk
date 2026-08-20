@@ -102,8 +102,10 @@ export class Toolbarbutton extends zul.LabelImageWidget implements zul.LabelImag
 		this._checked = checked;
 
 		if (o !== checked || opts?.force) {
-			if (this.desktop && this._mode == 'toggle')
-				jq(this.$n_())[checked ? 'addClass' : 'removeClass'](this.$s('checked'));
+			// a toolbar that its parent never draws leaves its children without a node
+			const n = this.$n();
+			if (n && this._mode == 'toggle')
+				jq(n)[checked ? 'addClass' : 'removeClass'](this.$s('checked'));
 		}
 
 		return this;
@@ -148,8 +150,10 @@ export class Toolbarbutton extends zul.LabelImageWidget implements zul.LabelImag
 
 		if (o !== value || opts?.force) {
 			const doDisable = (): void => {
-				if (this.desktop) {
-					jq(this.$n_()).attr('disabled', value ? 'disabled' : null); // use jQuery's attr() instead of dom.disabled for non-button element. Bug ZK-2146
+				// a toolbar that its parent never draws leaves its children without a node
+				const n = this.$n();
+				if (n) {
+					jq(n).attr('disabled', value ? 'disabled' : null); // use jQuery's attr() instead of dom.disabled for non-button element. Bug ZK-2146
 					if (this._upload)
 						value ? _cleanUpld(this) : _initUpld(this);
 				}
@@ -365,20 +369,24 @@ export class Toolbarbutton extends zul.LabelImageWidget implements zul.LabelImag
 	/** @internal */
 	override bind_(desktop?: zk.Desktop, skipper?: zk.Skipper, after?: CallableFunction[]): void {
 		super.bind_(desktop, skipper, after);
-		if (!this._disabled) {
-			var n = this.$n_();
+		// a toolbar that its parent never draws leaves its children without a node,
+		// and the uploader builds its file input next to that node
+		var n = this.$n();
+		if (n && !this._disabled) {
 			this.domListen_(n, 'onFocus', 'doFocus_')
 				.domListen_(n, 'onBlur', 'doBlur_');
+			if (this._upload) _initUpld(this);
 		}
-		if (!this._disabled && this._upload) _initUpld(this);
 	}
 
 	/** @internal */
 	override unbind_(skipper?: zk.Skipper, after?: CallableFunction[], keepRod?: boolean): void {
 		_cleanUpld(this);
-		var n = this.$n_();
-		this.domUnlisten_(n, 'onFocus', 'doFocus_')
-			.domUnlisten_(n, 'onBlur', 'doBlur_');
+		var n = this.$n();
+		if (n) {
+			this.domUnlisten_(n, 'onFocus', 'doFocus_')
+				.domUnlisten_(n, 'onBlur', 'doBlur_');
+		}
 
 		super.unbind_(skipper, after, keepRod);
 	}
@@ -458,8 +466,9 @@ export class Toolbarbutton extends zul.LabelImageWidget implements zul.LabelImag
 
 	/** @internal */
 	override focus_(timeout: number): boolean {
-		if (this._tabindex != undefined || this._href || this._upload) {
-			const n = this.$n_();
+		// a toolbar that its parent never draws leaves its children without a node
+		const n = this.$n();
+		if (n && (this._tabindex != undefined || this._href || this._upload)) {
 			zk.afterAnimate(() => {
 				try {
 					n.focus();

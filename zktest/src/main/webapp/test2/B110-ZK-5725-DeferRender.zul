@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);var b=document.getElementById('zk5725-errors');if(!b){b=document.createElement('pre');b.id='zk5725-errors';b.style.color='red';document.body.appendChild(b);}b.textContent='errors: '+window.zk5725Errors.length+' | '+window.zk5725Errors.join(' | ');});"?>
+<!--
+B110-ZK-5725-DeferRender.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 16:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		A render-deferred widget draws itself when its timer fires. If its placeholder is gone by
+		then, the timer must give up instead of binding a widget that has no DOM.
+		1. Click "detach" within 4 seconds. There should be no JS error in the console (F12).
+		2. The control below is left alone, so after 4 seconds its selectbox shows up.
+	</label>
+
+	<div id="d" renderdefer="4000">
+		<selectbox id="sb"/>
+	</div>
+
+	<label value="control (never detached):"/>
+	<div id="ctrl" renderdefer="4000">
+		<selectbox id="sbCtrl"/>
+	</div>
+
+	<button id="detach" label="detach" onClick="d.detach()"/>
+</zk>

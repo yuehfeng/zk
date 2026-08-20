@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+B110-ZK-5725-Radio.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 16:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		A radiogroup collects every radio below it, including the ones that are not drawn yet.
+		Checking one radio has to unheck the others without touching the DOM of the ones that
+		have none.
+		1. Click "check b". There should be no error box and no JS error in the console (F12).
+		2. "b" becomes checked and "a" goes back to its unchecked look.
+		3. The third radio is inside a render-deferred div, so it is never drawn during the test.
+	</label>
+
+	<radiogroup id="rg">
+		<radio id="a" label="a" checked="true"/>
+		<radio id="b" label="b"/>
+		<!-- renderdefer keeps this radio bound but without any DOM node -->
+		<div renderdefer="600000">
+			<radio id="ghost" label="ghost"/>
+		</div>
+	</radiogroup>
+
+	<button id="check" label="check b" onClick="b.setChecked(true)"/>
+</zk>

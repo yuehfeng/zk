@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(evt.message)window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-WindowScroll.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		Open this page with a tablet user agent. The tablet mold of Window wraps the content in
+		an extra -cave2 node after the children are bound, and a flex child asks for that node
+		while it is still missing.
+		1. Click "add window". The window shows its two labels and can be scrolled.
+		2. Click "resize". There should be no error in the console (F12).
+	</label>
+
+	<div id="holder"/>
+	<button id="add" label="add window">
+		<attribute name="onClick"><![CDATA[
+			Window w = new Window();
+			w.setId("w");
+			w.setTitle("scrollable");
+			w.setBorder("normal");
+			w.setWidth("300px");
+			w.setHeight("200px");
+			w.setContentStyle("overflow:auto");
+			w.setAttribute("org.zkoss.zul.nativebar", "false");
+			Vlayout v = new Vlayout();
+			v.setVflex("1");
+			new Label("line a").setParent(v);
+			new Label("line b").setParent(v);
+			v.setParent(w);
+			w.setParent(holder);
+		]]></attribute>
+	</button>
+	<button id="rz" label="resize" onClick="Clients.resize(holder.getFellow(&quot;w&quot;))"/>
+</zk>

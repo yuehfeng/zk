@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(evt.message)window.zk5725Errors.push(evt.message);});window.zk5725Shown=[];(function hook(){if(typeof zUtl==='undefined'||!zUtl.fireShown){setTimeout(hook,10);return;}if(zUtl.fireShown.zk5725)return;var orig=zUtl.fireShown;var patched=function(wgt){if(wgt&amp;&amp;wgt.id)window.zk5725Shown.push(wgt.id);return orig.apply(this,arguments);};patched.zk5725=true;zUtl.fireShown=patched;})();"?>
+<!--
+B110-ZK-5725-Drawer.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 21:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		A drawer inside a renderdefer container is bound but has no DOM yet, so opening it from the
+		server must not demand the -real node - and once the DOM finally shows up the drawer still
+		owes the rest of the open lifecycle.
+		1. Click "open the deferred drawer". Nothing shows up and there is no error box.
+		2. Click "render the deferred drawer". It slides in from the right, on top of the page,
+		   and the keyboard is trapped inside it (Tab cycles within the drawer).
+		3. Click "open the rendered drawer". The drawer slides in from the left.
+	</label>
+
+	<div id="wrap" renderdefer="600000">
+		<drawer id="deferred" title="deferred" position="right">
+			<label value="deferred content"/>
+			<button id="inDeferred" label="inside the deferred drawer"/>
+		</drawer>
+	</div>
+	<button id="openDeferred" label="open the deferred drawer" onClick="deferred.open()"/>
+	<button id="renderDeferred" label="render the deferred drawer"
+			onClick='Clients.evalJavaScript("zk.Widget.$(&apos;$wrap&apos;).forcerender();")'/>
+
+	<drawer id="rendered" title="rendered" position="left">
+		<label value="rendered content"/>
+	</drawer>
+	<button id="openRendered" label="open the rendered drawer" onClick="rendered.open()"/>
+</zk>

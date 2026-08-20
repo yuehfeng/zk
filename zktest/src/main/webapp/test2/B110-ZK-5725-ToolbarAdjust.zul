@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);var b=document.getElementById('zk5725-errors');if(!b){b=document.createElement('pre');b.id='zk5725-errors';b.style.color='red';document.body.appendChild(b);}b.textContent='errors: '+window.zk5725Errors.length+' | '+window.zk5725Errors.join(' | ');});"?>
+<!--
+B110-ZK-5725-ToolbarAdjust.zul
+
+        Purpose:
+
+        Description:
+
+        History:
+                Thu Aug 20 15:20:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+    <label multiline="true">
+        Toolbar._adjustContent() postpones itself every 20ms while an image is still loading, so the
+        postponed run resumes long after the call that started it, without its guards.
+        1. Click 1a then 1b: the first toolbar starts loading an image that answers only after 8s,
+           and is detached while that image is still on the way.
+        2. Click 2a then 2b: the second toolbar does the same, but turns overflowPopup off instead.
+        3. Once each image finally answers, the postponed run resumes. There should be no JS error
+           in the console (F12), and no red "errors:" box should appear at the bottom of the page.
+    </label>
+
+    <separator/>
+    <toolbar id="tbDetach" overflowPopup="true" width="220px">
+        <toolbarbutton id="detachImg" label="slow"/>
+        <toolbarbutton label="detach me 1"/>
+        <toolbarbutton label="detach me 2"/>
+        <toolbarbutton label="detach me 3"/>
+    </toolbar>
+    <toolbar id="tbToggle" overflowPopup="true" width="220px">
+        <toolbarbutton id="toggleImg" label="slow"/>
+        <toolbarbutton label="toggle me 1"/>
+        <toolbarbutton label="toggle me 2"/>
+        <toolbarbutton label="toggle me 3"/>
+    </toolbar>
+
+    <separator/>
+    <button id="loadDetach" label="1a. start the slow image of the first toolbar"
+            onClick='detachImg.setImage("/test2/B110-ZK-5725-SlowImage.jsp?d=8&amp;n=1")'/>
+    <button id="doDetach" label="1b. detach the first toolbar" onClick="tbDetach.detach()"/>
+    <separator/>
+    <button id="loadToggle" label="2a. start the slow image of the second toolbar"
+            onClick='toggleImg.setImage("/test2/B110-ZK-5725-SlowImage.jsp?d=8&amp;n=2")'/>
+    <button id="doToggle" label="2b. turn overflowPopup off" onClick="tbToggle.setOverflowPopup(false)"/>
+</zk>

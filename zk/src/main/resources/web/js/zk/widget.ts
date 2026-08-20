@@ -612,7 +612,10 @@ function _prepareRemove(wgt: zk.Widget, ary: HTMLElement[]): void {
 
 //render the render defer (usually controlled by server)
 function _doDeferRender(wgt: zk.Widget): void {
-	if (wgt._z$rd) { //might be redrawn by forcerender
+	//the placeholder might be gone already (detached or replaced by a ROD stub), or a widget
+	//built by a later invalidation might answer to the same uuid by now - the node it drew
+	//belongs to it, not to us
+	if (wgt._z$rd && _binds[wgt.uuid] === wgt && document.getElementById(wgt.uuid)) { //might be redrawn by forcerender
 		delete wgt._z$rd;
 		wgt._norenderdefer = true;
 		wgt.replaceHTML('#' + wgt.uuid, wgt.parent?.desktop, undefined, true);

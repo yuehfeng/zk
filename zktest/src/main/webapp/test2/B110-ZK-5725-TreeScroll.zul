@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(evt.message)window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-TreeScroll.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		Open this page with a touch enabled browser. The tree scrolls the selected item into
+		view from a timer; the selected item here is render-deferred and therefore has no DOM.
+		1. The tree shows "A" and "C", "ghost" stays a placeholder.
+		2. Click "resize". There should be no error in the console (F12).
+	</label>
+
+	<tree id="t" height="150px">
+		<custom-attributes org.zkoss.zul.nativebar="false"/>
+		<treecols>
+			<treecol label="name"/>
+		</treecols>
+		<treechildren>
+			<treeitem>
+				<treerow><treecell label="A"/></treerow>
+			</treeitem>
+			<!-- selected, but only a placeholder is drawn for it -->
+			<treeitem id="ghost" selected="true" renderdefer="600000">
+				<treerow><treecell label="ghost"/></treerow>
+			</treeitem>
+			<treeitem>
+				<treerow><treecell label="C"/></treerow>
+			</treeitem>
+		</treechildren>
+	</tree>
+
+	<button id="rz" label="resize" onClick="Clients.resize(t)"/>
+</zk>

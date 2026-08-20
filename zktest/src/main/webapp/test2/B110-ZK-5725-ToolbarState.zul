@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);var b=document.getElementById('zk5725-errors');if(!b){b=document.createElement('pre');b.id='zk5725-errors';b.style.color='red';document.body.appendChild(b);}b.textContent='errors: '+window.zk5725Errors.length+' | '+window.zk5725Errors.join(' | ');});"?>
+<!--
+B110-ZK-5725-ToolbarState.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 17:30:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		A tabbox only draws its toolbar when tabscroll is on, so the buttons below are live widgets
+		without a node. Changing their state must keep working instead of breaking the response.
+		1. Click "disable" then "check": no error popup appears and there should be no JS error in
+		   the console (F12). The label under the buttons keeps counting up, which proves the rest
+		   of each response still runs.
+		2. The control toolbar is drawn: "disable the control" greys its button out and "check the
+		   control" turns its toggle button on.
+	</label>
+
+	<tabbox id="tbx" tabscroll="false" width="400px">
+		<toolbar id="tb">
+			<toolbarbutton id="b1" label="never drawn"/>
+			<toolbarbutton id="b2" label="never drawn toggle" mode="toggle"/>
+		</toolbar>
+		<tabs>
+			<tab id="tab1" label="first"/>
+			<tab id="tab2" label="second"/>
+		</tabs>
+		<tabpanels>
+			<tabpanel><label id="panel1" value="content of the first panel"/></tabpanel>
+			<tabpanel><label id="panel2" value="content of the second panel"/></tabpanel>
+		</tabpanels>
+	</tabbox>
+
+	<zscript><![CDATA[
+		int count = 0;
+	]]></zscript>
+	<button id="disable" label="disable"
+			onClick='b1.setDisabled(true); done.setValue("responses completed: " + (++count));'/>
+	<button id="check" label="check"
+			onClick='b2.setChecked(true); done.setValue("responses completed: " + (++count));'/>
+	<label id="done" value="responses completed: 0"/>
+
+	<separator/>
+	<label value="control: the same two buttons in a drawn toolbar"/>
+	<toolbar id="tbCtrl">
+		<toolbarbutton id="b1Ctrl" label="drawn"/>
+		<toolbarbutton id="b2Ctrl" label="drawn toggle" mode="toggle"/>
+	</toolbar>
+	<button id="disableCtrl" label="disable the control" onClick="b1Ctrl.setDisabled(true)"/>
+	<button id="checkCtrl" label="check the control" onClick="b2Ctrl.setChecked(true)"/>
+</zk>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+B110-ZK-5725-NestedRod.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		Once the outer groupbox goes back to ROD, the inner one is unbound but keeps its own ROD
+		bookkeeping. Opening the inner groupbox then has no DOM to render into and must do nothing.
+		1. Click the three buttons in order. There should be no error box and no retry alert.
+		2. Click "4 open outer". The inner groupbox opens and shows its selectbox.
+	</label>
+
+	<groupbox id="outer" open="true" width="300px">
+		<caption label="outer"/>
+		<groupbox id="inner" open="false">
+			<caption label="inner"/>
+			<selectbox id="sb"/>
+		</groupbox>
+	</groupbox>
+
+	<button id="b1" label="1 close outer" onClick="outer.setOpen(false)"/>
+	<button id="b2" label="2 invalidate outer" onClick="outer.invalidate()"/>
+	<button id="b3" label="3 open inner" onClick="inner.setOpen(true)"/>
+	<button id="b4" label="4 open outer" onClick="outer.setOpen(true)"/>
+</zk>

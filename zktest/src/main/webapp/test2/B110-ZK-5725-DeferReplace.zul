@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);var b=document.getElementById('zk5725-errors');if(!b){b=document.createElement('pre');b.id='zk5725-errors';b.style.color='red';document.body.appendChild(b);}b.textContent='errors: '+window.zk5725Errors.length+' | '+window.zk5725Errors.join(' | ');});"?>
+<!--
+B110-ZK-5725-DeferReplace.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Fri Aug 21 10:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		Invalidating an ancestor rebuilds the render-deferred div as a brand new widget that reuses
+		the very same uuid. The timer of the widget it replaced is still pending, and the node it
+		is going to look up now belongs to somebody else.
+		1. Click "invalidate the parent" within 5 seconds.
+		2. After 5 seconds nothing should happen: no JS error in the console (F12) and the deferred
+		   div stays a placeholder, because its replacement asked for a much longer delay.
+		3. The control below is left alone, so after 5 seconds it shows "control content".
+	</label>
+
+	<div id="outer">
+		<div id="d" renderdefer="5000">
+			<label id="inner" value="deferred content"/>
+		</div>
+	</div>
+	<button id="go" label="invalidate the parent">
+		<attribute name="onClick">
+			<![CDATA[
+				// the replacement waits practically forever, so anything that shows up within the
+				// next few seconds can only come from the timer of the widget it replaced
+				d.setRenderdefer(600000);
+				outer.invalidate();
+			]]>
+		</attribute>
+	</button>
+
+	<label value="control (never invalidated):"/>
+	<div id="ctrl" renderdefer="5000">
+		<label id="innerCtrl" value="control content"/>
+	</div>
+</zk>

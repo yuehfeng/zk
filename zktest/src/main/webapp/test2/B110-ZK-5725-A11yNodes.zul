@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-A11yNodes.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 21:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		The za11y layer declares getA11yRealNode_() and focus_() as tolerant of a missing node, and
+		every caller is written for that. The widgets below are bound but never rendered
+		(renderdefer), so those two entry points must answer instead of throwing.
+		1. Nothing on this page throws while it loads (F12 console is clean).
+		2. Click "detach the other extern radio". The remaining radios still work and there is no
+		   error box.
+	</label>
+
+	<div renderdefer="600000">
+		<checkbox id="cbDefault" label="default mold"/>
+		<checkbox id="cbSwitch" mold="switch" label="switch mold"/>
+		<imagemap id="im" width="60px" height="60px" src="img/icon_browser.png"/>
+		<slider id="sl" mold="knob" width="120px"/>
+		<grid id="gd">
+			<columns>
+				<column id="col" label="c" sort="auto"/>
+			</columns>
+			<rows>
+				<row><label value="r"/></row>
+			</rows>
+		</grid>
+		<tabbox id="tbx">
+			<tabs><tab id="tb" label="t"/></tabs>
+			<tabpanels><tabpanel>p</tabpanel></tabpanels>
+		</tabbox>
+		<menubar>
+			<menu id="mn" label="m">
+				<menupopup id="mp"><menuitem label="i"/></menupopup>
+			</menu>
+		</menubar>
+	</div>
+
+	<radiogroup id="rg">
+		<radio id="rIn" label="in the group"/>
+	</radiogroup>
+	<radio id="rGhost" label="ghost" radiogroup="rg"/>
+	<radio id="rKeep" label="keep" radiogroup="rg"/>
+	<radio id="rOther" label="other" radiogroup="rg"/>
+	<button id="detachOther" label="detach the other extern radio" onClick="rOther.detach()"/>
+</zk>

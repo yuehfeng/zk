@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(evt.message)window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-GroupboxTouch.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		Opening a groupbox that was closed at load time rebinds its children. A render-deferred child
+		only has a placeholder at that moment, so it must be left alone (ZK-5681) - on a tablet too.
+		1. Click "open". There should be no error in the console (F12).
+		2. The label inside the groupbox shows up, the checkbox stays deferred.
+	</label>
+
+	<groupbox id="gb" open="false" width="300px">
+		<caption label="a closed groupbox"/>
+		<label id="inside" value="content of the groupbox"/>
+		<!-- renderdefer leaves this checkbox as a bare placeholder while the groupbox is redrawn -->
+		<checkbox id="cbx" label="deferred" renderdefer="600000"/>
+	</groupbox>
+
+	<button id="op" label="open" onClick="gb.setOpen(true)"/>
+</zk>

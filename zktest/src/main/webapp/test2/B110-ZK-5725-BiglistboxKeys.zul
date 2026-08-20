@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(!evt.message)return;window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-BiglistboxKeys.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<zscript><![CDATA[
+	class SimpleMatrixModel extends AbstractListModel implements MatrixModel {
+		public Object getElementAt(int index) {
+			return "row" + index;
+		}
+		public int getSize() {
+			return 20;
+		}
+		public int getColumnSize() {
+			return 6;
+		}
+		public int getHeadSize() {
+			return 1;
+		}
+		public Object getHeadAt(int rowIndex) {
+			return "head" + rowIndex;
+		}
+		public Object getCellAt(Object rowData, int columnIndex) {
+			return rowData + "-" + columnIndex;
+		}
+		public Object getHeaderAt(Object headData, int columnIndex) {
+			return "col" + columnIndex;
+		}
+	}
+	SimpleMatrixModel model = new SimpleMatrixModel();
+	]]></zscript>
+
+	<label multiline="true">
+		frozenCols defaults to 0, so a plain biglistbox has no frozen column block to move the
+		keyboard focus into.
+		1. Click the first row, then press the up arrow. The focus moves to the first column header
+		   and there is no JS error in the console (F12).
+		2. Press the right arrow and then the up arrow again. The focus keeps walking the grid.
+	</label>
+
+	<biglistbox id="blb" model="${model}" colWidth="100px" width="400px" height="200px"/>
+</zk>

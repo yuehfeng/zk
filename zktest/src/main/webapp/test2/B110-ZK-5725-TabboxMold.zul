@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?script content="window.zk5725Errors=[];window.addEventListener('error',function(evt){if(evt.message)window.zk5725Errors.push(evt.message);});"?>
+<!--
+B110-ZK-5725-TabboxMold.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		Open this page with a tablet user agent.
+		1. Click "1 accordion". The tabbox has to switch to the accordion mold right away.
+		2. Click "2 resize". There should be no error in the console (F12).
+	</label>
+
+	<tabbox id="tb" width="300px" height="200px">
+		<tabs>
+			<tab label="t1"/>
+			<tab label="t2"/>
+		</tabs>
+		<tabpanels>
+			<tabpanel>panel 1</tabpanel>
+			<tabpanel>panel 2</tabpanel>
+		</tabpanels>
+	</tabbox>
+
+	<button id="b1" label="1 accordion" onClick='tb.setMold("accordion")'/>
+	<button id="b2" label="2 resize" onClick="Clients.resize(tb)"/>
+</zk>

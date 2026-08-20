@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+B110-ZK-5725-ComboRod.zul
+
+	Purpose:
+
+	Description:
+
+	History:
+		Thu Aug 20 18:00:00 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		A closed combobox draws a ROD stub instead of its popup. Once the popup is drawn for real
+		the ROD state must be dropped, otherwise the combobox keeps believing its children have no DOM.
+		1. Click "1 rerender the popup". The popup is redrawn for real.
+		2. Click "2 add a comboitem". The server appends a third comboitem.
+		3. Open the combobox. All three items ("a", "b", "c") must be listed.
+	</label>
+
+	<combobox id="cb" width="200px">
+		<comboitem label="a"/>
+		<comboitem label="b"/>
+	</combobox>
+
+	<button id="rerender" label="1 rerender the popup" onClick='cb.setPlaceholder("type here")'/>
+	<button id="add" label="2 add a comboitem" onClick='new Comboitem("c").setParent(cb)'/>
+</zk>

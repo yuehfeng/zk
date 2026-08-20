@@ -720,7 +720,10 @@ export class LayoutRegion extends zul.Widget {
 
 		if (child instanceof zul.layout.Borderlayout) {
 			this._flex = false;
-			jq(this.$n_()).removeClass(this.$s('nested'));
+			// the region might not be rendered yet
+			const node = this.$n();
+			if (node)
+				jq(node).removeClass(this.$s('nested'));
 		}
 
 		// reset
