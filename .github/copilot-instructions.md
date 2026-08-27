@@ -1,142 +1,104 @@
 # ZK Framework — AI Development Guide
 
-## Project Overview
-ZK is an open-source Java web framework. The sibling directory `../zkcml/` contains enterprise extensions that depend on this project.
+Build, test, and workflow mechanics for this repo. Framework coding conventions
+are in `AGENTS.md` (which imports this file); Claude Code's deep per-surface
+rules are in `.claude/rules/`.
 
-**Modules:**
-- `zk/`, `zul/`, `zkbind/`, `zhtml/` — core framework (TypeScript + Java)
-- `zcommon/`, `zel/`, `zweb/`, `zweb-dsp/`, `zkplus/` — shared utilities
-- `zktest/` — Selenium integration tests
-- `eslint-plugin-zk/` — custom ESLint rules
+## Project Overview
+
+ZK is an open-source Java web framework. The sibling directory `../zkcml/`
+contains enterprise (EE) extensions that depend on this project.
+
+**Modules:** `zk`, `zul`, `zkbind`, `zhtml` (core, TypeScript + Java);
+`zcommon`, `zel`, `zweb`, `zweb-dsp`, `zkplus` (shared utilities); `zktest`
+(Selenium/WebDriver integration tests); `eslint-plugin-zk` (custom lint rules).
 
 ## Version
 
-**Always read the current version dynamically** from `gradle.properties` — never hardcode.
-- `zk/gradle.properties` (CE)
-- `zkcml/gradle.properties` (EE — at `../zkcml/`)
+**Always read the current version dynamically** from `gradle.properties` — never
+hardcode. `zk/gradle.properties` (CE) and `zkcml/gradle.properties` (EE) must
+stay in sync. The active dev version ends in `-SNAPSHOT`. Version-code mapping
+(file naming): `10.0.0`→`100`, `10.4.0`→`104`, `11.0.0`→`110`.
 
-The active development version ends in `-SNAPSHOT`. Both files must always stay in sync.
-
-Version code mapping (used in file naming): `10.0.0` → `100`, `10.4.0` → `104`, `11.0.0` → `110`.
-
-To update version:
 ```bash
 ./gradlew upVer -PchangeVersionTo=X.Y.Z
 ./gradlew versionCheck -Pcheck.version=X.Y.Z
 ```
 
 ## Tech Stack
-- **Frontend:** TypeScript 5.3.3 + JavaScript, Gulp 5 + Webpack 5
-- **Backend:** Java 11, Gradle
-- **CI:** GitHub Actions (`.github/workflows/`)
+
+Java 11, Gradle 7.6.4, Node 20, TypeScript 5.3.3, ESLint 9 (flat config), Gulp 5,
+Webpack 5, Checkstyle 10.18.1.
 
 ## Build Commands
 
-### TypeScript / JavaScript
 ```bash
-npm run build        # build all TS/JS (gulp)
-npm run dev          # watch mode
-npm run type-check   # type check only, no output
-npm run lint -- .    # ESLint on .js and .ts files (path argument required)
-```
-
-### Java
-```bash
-./gradlew clean build         # full build
-./gradlew checkstyleMain      # Java style check only
-./gradlew :zk:build           # single module build
-./gradlew publishToMavenLocal # publish to local Maven so zktest picks up latest changes
+npm run build          # build all TS/JS (gulp)
+npm run dev            # watch mode
+npm run type-check     # tsc --noEmit
+npm run lint -- <path> # ESLint (path arg required; whole-tree `.` exceeds the CI gate)
+./gradlew tscheck      # root TS type-check (composite-aware)
+./gradlew jscheck      # JS lint, per subproject (:zul:jscheck) — this IS the CI gate
+./gradlew jsfix        # manual ESLint autofix entry; don't run eslint --fix directly
+./gradlew compileLess  # LESS compile (per subproject)
+./gradlew checkstyleMain          # Java style
+./gradlew :zk:build               # single-module build
+./gradlew publishToMavenLocal     # so zktest picks up local changes
 ```
 
 ## Code Style
 
-### TypeScript / JavaScript
-- ESLint config: `.eslintrc.js` (root)
-- Custom rules: `eslint-plugin-zk/` — do not disable without review
-- Microsoft SDL plugin is enabled — security patterns are enforced
-- **ESLint errors block CI** — fix all errors before committing
+ESLint (flat `eslint.config.js` at root, custom `eslint-plugin-zk` + Microsoft
+SDL) and Checkstyle (`config/checkstyle/`) are CI-blocking and enforce Java/TS
+style, imports, naming, Javadoc/TSDoc presence, and client-side XSS sinks. Fix
+all errors before committing; do not disable `eslint-plugin-zk` rules without
+review. What lint can't check is in `AGENTS.md` / `.claude/rules/`.
 
-### Java
-- Checkstyle config: `config/checkstyle/`
-- Violations block CI
+## Testing
 
-## Testing Requirements
-
-**Do NOT use the VS Code IDE's built-in test runner (▶ play button).** It bypasses Gradle's resource processing, leaving `@version@` placeholders unresolved, causing `Language not found: xul/html` errors. Always use the CLI commands below.
-
-**Every bug fix and new feature MUST include a test case.**
-
-### How to Run Tests
+**Every bug fix and new feature needs a test.** Do NOT use the IDE's built-in
+runner (▶) — it skips resource processing and yields `Language not found` errors.
+Use the CLI:
 
 ```bash
-# Run a single test class (from project root)
-cd zktest && ./gradlew test --tests "org.zkoss.zktest.zats.test2.B104_ZK_6047Test" -PmaxParallelForks=1 --console=plain --no-daemon
-
-# If the test has @ForkJVMTestOnly or @Tag("ForkJVMTestOnly") annotation (requires Docker)
-cd zktest && ./gradlew testGroupForkJVMTestOnly --tests "org.zkoss.zktest.zats.test2.B101_ZK_5716Test" -PmaxParallelForks=1 --console=plain --no-daemon
-
-# Full test suite (excludes WCAG and ForkJVMTestOnly)
-cd zktest && ./gradlew test
-
-# WCAG / accessibility tests (requires Lighthouse)
-cd zktest && ./gradlew testWCAGOnly
+# single class (from repo root)
+cd zktest && ./gradlew test --tests "org.zkoss.zktest.zats.test2.B104_ZK_6047Test" \
+  -PmaxParallelForks=1 --console=plain --no-daemon
+# a class tagged @ForkJVMTestOnly (needs Docker)
+cd zktest && ./gradlew testGroupForkJVMTestOnly --tests "…" -PmaxParallelForks=1 --console=plain --no-daemon
+cd zktest && ./gradlew test            # full suite (excludes WCAG / ForkJVMTestOnly)
+cd zktest && ./gradlew testWCAGOnly    # accessibility (needs Lighthouse)
 ```
 
-**Important:** Check the test file for `@ForkJVMTestOnly` or `@Tag("ForkJVMTestOnly")` annotation to decide whether to use `test` or `testGroupForkJVMTestOnly`.
-
-### Location & Naming Convention
-- Path: `zktest/src/test/java/org/zkoss/zktest/zats/test2/`
-- Pattern: `B{majorVersion}_{IssueId}Test.java`
-- Example: `B100_ZK_5529Test.java` → ZK 10.x, issue ZK-5529
-
-### Test Template
-```java
-package org.zkoss.zktest.zats.test2;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Test;
-import org.zkoss.test.webdriver.WebDriverTestCase;
-
-public class B100_ZK_5529Test extends WebDriverTestCase {
-    @Test
-    public void test() {
-        connect();
-        waitResponse();
-        // jq() for jQuery-style selectors
-        assertTrue(jq(".z-component").exists());
-    }
-}
-```
-
-- Extends `org.zkoss.test.webdriver.WebDriverTestCase`
-- For Selenium actions, use `Actions action = getActions();` instead of instantiating `new Actions(...)` directly
-- For drag interactions, do not use `dragAndDropBy`; write the sequence explicitly with `action.clickAndHold(...)` and the follow-up move/release calls
-- A corresponding ZUL page must be added under `zktest/src/main/webapp/test2/`
-  - ZUL naming uses dashes: `B100-ZK-5529.zul` (Java test uses underscores)
-- After adding the ZUL page, register it in `zktest/src/main/webapp/test2/config.properties`:
-  ```
-  B100-ZK-5529.zul=A,M,ComponentName
-  ```
-  - Field 1 — Code Level: `A`=Important, `B`=Unknown, `C`=Unimportant
-  - Field 2 — UX Level: `H`=Hard, `M`=Middle, `E`=Easy
-  - Field 3+ — affected component names (e.g., `Tree`, `Listbox`, `Grid`)
+- Extend `org.zkoss.test.webdriver.WebDriverTestCase`; use `getActions()` (not
+  `new Actions(...)`); write drags explicitly (`clickAndHold`/move/`release`).
+- Path `zktest/src/test/java/org/zkoss/zktest/zats/test2/`; a ZUL page under
+  `zktest/src/main/webapp/test2/` (dashes: `B100-ZK-5529.zul`); register it in
+  `zktest/src/main/webapp/test2/config.properties`:
+  `B100-ZK-5529.zul=A,M,ComponentName` (field 1 code level A/B/C, field 2 UX
+  level H/M/E, field 3+ affected components).
+- Naming, assertion quality, and interaction coverage: see
+  `.claude/rules/test-writing.md`.
 
 ## Source Layout
-- TS source: `{module}/src/main/resources/web/js/`
-- Java source: `{module}/src/main/java/org/zkoss/`
+
+TS source: `{module}/src/main/resources/web/js/`. Java: `{module}/src/main/java/org/zkoss/`.
 
 ## Critical Constraints
-- Do NOT change public Java APIs in `zk/`, `zul/`, or `zkbind/` without checking impact on `../zkcml/`
-- If any ZUL component attribute or element is added/removed/changed, update `zul/src/main/resources/metainfo/xml/zul.xsd` accordingly
+
+- Don't change public Java APIs in `zk`/`zul`/`zkbind` without checking `../zkcml/` impact.
+- Any ZUL attribute/element added/removed/changed → update
+  `zul/src/main/resources/metainfo/xml/zul.xsd` (and bump its schema timestamp).
 - Issue tracker: https://tracker.zkoss.org/projects/ZK
 
 ## Workflow for Each Issue
-1. Find or create the issue in tracker
-2. Write the test first in `zktest/` using the issue ID in the filename
-3. Add the corresponding ZUL test page in `zktest/src/main/webapp/test2/`
-4. Register the ZUL page in `zktest/src/main/webapp/test2/config.properties`
-5. Implement the fix
-6. If ZUL component API changed (attribute/element added or removed), update `zul/src/main/resources/metainfo/xml/zul.xsd`
-7. Run `npm run lint -- . && ./gradlew checkstyleMain`
-8. Verify the test passes
-9. PR title must reference the issue ID
+
+1. Find/create the tracker issue.
+2. Write the test first in `zktest/` using the issue id in the filename.
+3. Add the ZUL page under `zktest/src/main/webapp/test2/`.
+4. Register it in `config.properties`.
+5. Implement the fix.
+6. If a ZUL attribute/element changed, update `zul.xsd`.
+7. `./gradlew :<mod>:jscheck checkstyleMain` — lint the module you touched.
+8. Verify the test passes.
+9. PR title references the issue id.

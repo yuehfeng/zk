@@ -1,0 +1,32 @@
+{
+  "worktree": {
+    "bgIsolation": "none"
+  },
+  "permissions": {
+    "allow": [
+      "Read(../zkcml/**)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git ls-files:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(sed:*)",
+      "Bash(./gradlew tscheck:*)",
+      "Bash(./gradlew jscheck:*)",
+      "Bash(./gradlew compileLess:*)",
+      "Bash(./gradlew checkstyleMain:*)",
+      "Bash(./gradlew compileJava:*)",
+      "Bash(./gradlew compileTestJava:*)",
+      "Bash(./gradlew :zul:compileJava:*)",
+      "Bash(./gradlew test --tests:*)",
+      "Bash(./gradlew testWCAGOnly --tests:*)",
+      "Bash(./gradlew publishToMavenLocal:*)"
+    ],
+    "deny": [
+      "Bash(git reset --hard:*)",
+      "Bash(git checkout --:*)",
+      "Bash(rm -rf:*)"
+    ]
+  }
+}

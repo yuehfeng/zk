@@ -34,9 +34,25 @@ zk.code-workspace
 .env
 .vscode/.mcp.json
 
+# Claude Code: commit rules/skills/agents/settings.json/README + AGENTS.md + .mcp.json;
+# ignore personal overrides and runtime state only.
 .agents/
-.claude/
-.mcp.json
+.claude/settings.local.json
+.claude/*.local.json
+.claude/scheduled_tasks.lock
+.claude/scheduled_tasks.json
+.claude/worktrees/
+.claude/.cc-writes/
+**/.cc-writes/
+.claude/scripts/
+.claude/jobs/
+.claude/projects/
+.claude/todos/
+.claude/shell-snapshots/
+.claude/memory/
+.claude/daemon/
 .vscode/mcp.json
+.vscode/
 docs/
 skills-lock.json
+.codex/

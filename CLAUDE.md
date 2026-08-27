@@ -1,33 +1,50 @@
-@.github/copilot-instructions.md
+@AGENTS.md
 
-## Architecture: Component-Widget Duality
+## Claude Code in this repo
 
-ZK uses a dual-object model — every UI element has two halves:
-- **Java Component** (server): state, business logic, `smartUpdate()` pushes changes to client
-- **TypeScript Widget** (client): DOM management, user interaction, `fire()` sends events to server
+The framework conventions above (via `@AGENTS.md`) are the always-on core.
+**Detailed per-surface rules live in `.claude/rules/*.md` and auto-load by
+`paths:` when you open a matching file** — editing a component's `.java` pulls in
+`framework-contracts`, `java-component`, `security-accessibility`, and
+`lifecycle-data-build`; a widget `.ts`/mold `.js` pulls in `typescript-widget`;
+a `*Test.java` pulls in `test-writing`. Subagents get the same rule injected when
+they read a matching file, so you don't restate rule content to them.
 
-Mapping: `org.zkoss.zul.Button` (Java) <-> `zul.wgt.Button` (TypeScript)
-When modifying a component, check if BOTH sides need changes.
+## Skills (`.claude/skills/`)
 
-## Module Dependency Order
+- `fix-issue` — implement a ZK ticket/bug fix end to end (any surface).
+- `zk-component-change` — keep both halves of a component change in sync.
+- `zk-review` — review a diff against the ZK gates, priorities, and
+  known-correct patterns.
+- `zk-security-audit` — audit output-encoding, resource, and CE/EE surfaces.
+- `zk-test-artifacts` — plan/verify the test trifecta and interaction coverage.
 
-```
-zcommon -> zel -> zweb -> zweb-dsp -> zk -> zul -> zhtml -> zkbind -> zkplus -> zktest
-```
+## Checker subagents (`.claude/agents/`)
 
-- `../zkcml/` (enterprise) depends on `zk`, `zul`, `zkbind`
-- `zktest` depends on ALL modules — always build upstream first if tests fail
+Run these read-only agents in parallel before declaring a change done:
+`zk-component-architect`, `zk-code-reviewer`, `zk-security-auditor`,
+`zk-test-architect`.
 
-## Bug Investigation with CaseFoundry
+## Test artefact naming & registration
 
-This project has a CaseFoundry MCP server with 18,000+ historical cases.
-- `search_cases("description")` — find similar past bugs
-- `lookup_issue("ZK-XXXX")` — get full context for a Jira issue
-- `diagnose_from_stacktrace("...")` — automated stack trace analysis
-- Use `git blame` to find commits, extract ZK-XXXX from message, then `lookup_issue`
+The `B`/`F` prefix of a test page is the **current dev version's code**: read
+`version=` from `gradle.properties` and concatenate major and minor —
+`11.0.0-SNAPSHOT` → `110`, `10.4.0` → `104`, `10.0.0` → `100`. Derive it every
+time; never hardcode it, it moves with the release.
 
-## Commit Convention
+Register the page in `zktest/src/main/webapp/test2/config.properties` **inside its
+own version group** — the contiguous `##zats##B110-…` block — not appended at the
+end of the file. (Some existing entries sit at EOF; they are the mistake, not the
+pattern.)
 
-- Format: `ZK-XXXX: short description` or `fix ZK-XXXX short description`
-- Imperative mood: fix, add, support, update, remove, replace
-- PR title MUST include `ZK-XXXX`
+That file is **CRLF**. Append with `\r\n`. A single bare-LF line is invisible to
+`file(1)`, which still reports "ASCII text, with CRLF line terminators"; only
+comparing CR and LF byte counts (`tr -dc '\r' | wc -c` vs `tr -dc '\n' | wc -c`)
+reveals it.
+
+## Workspace
+
+Developed as two sibling repos: `zk` (this CE repo) and `zkcml` (EE, at
+`../zkcml`) — treat them as one workspace for public API, EE/CE boundary, za11y,
+and shared component behavior. Each repo has its own `.claude/`; open Claude Code
+in the repo you are editing.
