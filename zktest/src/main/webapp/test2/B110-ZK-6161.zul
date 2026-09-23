@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+B110-ZK-6161.zul
+
+        Purpose:
+
+        Description:
+
+        History:
+                Thu Sep 24 15:18:55 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk>
+	<label multiline="true">
+		Steps to reproduce:
+		1. Type "abc" into the daterangebox begin input and blur. Do the same with the
+			end input, and with the datebox beside it.
+
+		- Expected: every one of them names the pattern the user has to type —
+			"You must specify a date. Format: yyyy/MM/dd" — which is what the datebox
+			already says (WCAG 2.1 SC 3.3.3 Error Suggestion).
+		- Bug: the daterangebox reports "Invalid range" instead. It says nothing about
+			the format, and it is the same text a violated range rule gets, so a typo
+			and a wrong range are indistinguishable.
+
+		2. In the second daterangebox (minNights=2, maxNights=5), type a pair that
+			PARSES but breaks a rule: 2026/09/05 then 2026/09/01, or 2026/09/01 then
+			2026/09/02, or 2026/09/01 then 2026/09/20.
+
+		- Expected, and NOT changed by this ticket: each keeps its own reason —
+			"Begin date must not be later than end date", "At least 2 night(s)",
+			"At most 5 night(s)". Only the parse failure above stops saying
+			"Invalid range".
+	</label>
+	<div>
+		<!-- onError carries the same text as the errorbox; the label lets the test
+			pin the event payload and not just the bubble -->
+		<daterangebox id="drb" format="yyyy/MM/dd"
+			onError='lblError.setValue(event.getMessage())'/>
+	</div>
+	<div>
+		<!-- the side-by-side control the ticket cites: same format, same bad input -->
+		<datebox id="db" format="yyyy/MM/dd"/>
+	</div>
+	<div>
+		<daterangebox id="drbNights" format="yyyy/MM/dd" minNights="2" maxNights="5"/>
+	</div>
+	<label id="lblError" value=""/>
+</zk>
