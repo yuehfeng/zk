@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+B110-ZK-6166.zul
+
+        Purpose:
+
+        Description:
+
+        History:
+                Thu Sep 24 15:18:55 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk xmlns:n="native">
+	<label multiline="true">
+		Steps to reproduce:
+		1. Look at the top edge of each indicator below. None of them has any
+			author-side CSS.
+
+		- Expected: every indicator is drawn whole.
+		- Bug: .z-badge-indicator is absolutely positioned with
+			transform: translate(50%, -50%), so a 20px indicator overhung its
+			anchor by 10px while .z-groupbox-content is overflow: hidden with only
+			8px of top padding — and the same happened in any overflow: hidden box.
+	</label>
+	<groupbox id="gb" title="Notification badges">
+		<hlayout spacing="28px" valign="middle">
+			<badge id="bInbox" count="5">
+				<button label="Inbox" iconSclass="z-icon-envelope"/>
+			</badge>
+			<badge id="bAlerts" count="120" max="99" severity="warning">
+				<button label="Alerts" iconSclass="z-icon-bell"/>
+			</badge>
+			<badge id="bDot" dot="true" severity="info">
+				<button label="Feed"/>
+			</badge>
+		</hlayout>
+	</groupbox>
+	<n:div id="clip" style="height:70px;overflow:hidden;border:1px solid #bbb;padding:8px 16px">
+		<badge id="bTasks" count="7">
+			<button label="Tasks"/>
+		</badge>
+	</n:div>
+</zk>

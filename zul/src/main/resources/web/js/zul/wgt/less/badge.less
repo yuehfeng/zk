@@ -37,32 +37,50 @@
 		font-weight: normal;
 	}
 
-	&-top_right > .z-badge-indicator {
-		top: 0;
-		right: 0;
-		transform: translate(50%, -50%);
+	// ZK-6166: reserve the overhang as padding and drop the outward transform —
+	// an absolutely positioned child resolves top/right against the PADDING box,
+	// which includes the padding, so padding alone would not have moved it in.
+	&-top_right {
+		padding: 10px 10px 0 0;
+		> .z-badge-indicator {
+			top: 0;
+			right: 0;
+		}
 	}
-	&-top_left > .z-badge-indicator {
-		top: 0;
-		left: 0;
-		transform: translate(-50%, -50%);
+	&-top_left {
+		padding: 10px 0 0 10px;
+		> .z-badge-indicator {
+			top: 0;
+			left: 0;
+		}
 	}
-	&-bottom_right > .z-badge-indicator {
-		bottom: 0;
-		right: 0;
-		transform: translate(50%, 50%);
+	&-bottom_right {
+		padding: 0 10px 10px 0;
+		> .z-badge-indicator {
+			bottom: 0;
+			right: 0;
+		}
 	}
-	&-bottom_left > .z-badge-indicator {
-		bottom: 0;
-		left: 0;
-		transform: translate(-50%, 50%);
+	&-bottom_left {
+		padding: 0 0 10px 10px;
+		> .z-badge-indicator {
+			bottom: 0;
+			left: 0;
+		}
 	}
 
-	&-dot > .z-badge-indicator {
-		min-width: 6px;
-		height: 6px;
-		padding: 0;
-		border-radius: 50%;
+	// A dot is 6px, so it only overhangs by 3px — reserve that, not the pill's 10px.
+	&-dot {
+		&.z-badge-top_right { padding: 3px 3px 0 0; }
+		&.z-badge-top_left { padding: 3px 0 0 3px; }
+		&.z-badge-bottom_right { padding: 0 3px 3px 0; }
+		&.z-badge-bottom_left { padding: 0 0 3px 3px; }
+		> .z-badge-indicator {
+			min-width: 6px;
+			height: 6px;
+			padding: 0;
+			border-radius: 50%;
+		}
 	}
 
 	&-info > .z-badge-indicator      { background: @severityInfoAccentColor; }
