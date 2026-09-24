@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+B110-ZK-6165.zul
+
+        Purpose:
+
+        Description:
+
+        History:
+                Thu Sep 24 15:18:55 CST 2026, Created by peakerlee
+
+Copyright (C) 2026 Potix Corporation. All Rights Reserved.
+-->
+<zk xmlns:n="native">
+	<label multiline="true">
+		Steps to reproduce:
+		1. Measure the prev/next arrow chevron against its own disc, over the light slide.
+
+		- Expected: at least 3:1. The chevron is an essential graphical object, so
+			SC 1.4.11 applies.
+		- Bug: the disc backdrop was rgba(0, 0, 0, 0.4), which composites to #999999
+			over a light slide, leaving the white chevron at 2.85:1.
+
+		2. Look at the arrow on the dark slide.
+
+		- Expected: the disc still reads as a control. Contrast alone cannot do this
+			(black on black at any alpha), so the arrow carries a light ring, the way
+			zkmax scrollview's floating scrollbar does.
+	</label>
+	<carousel id="car" width="100%" height="220px">
+		<carouselitem label="Light slide">
+			<n:div id="lightSlide" style="height:100%;box-sizing:border-box;padding:50px 72px;background:#FFFFFF">
+				<n:h2 style="margin:0;color:#1a4a73">Light slide</n:h2>
+			</n:div>
+		</carouselitem>
+		<carouselitem label="Dark slide">
+			<n:div id="darkSlide" style="height:100%;box-sizing:border-box;padding:50px 72px;background:#101418">
+				<n:h2 style="margin:0;color:#dfe8f0">Dark slide</n:h2>
+			</n:div>
+		</carouselitem>
+	</carousel>
+</zk>
